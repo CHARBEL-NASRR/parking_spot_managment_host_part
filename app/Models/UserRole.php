@@ -8,22 +8,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class UserRole extends Model
 {
     protected $table = 'User_Roles';  
-    protected $primaryKey = 'userrole_id';  // Custom primary key
-    public $incrementing = true;             
-    protected $keyType = 'int';              
-
+    
     protected $fillable = [
         'user_id',
         'role_id',
     ];
 
-    public function user(): BelongsTo
+   public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
     public function role(): BelongsTo
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class, 'role_id', 'role_id');
     }
 }

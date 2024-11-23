@@ -8,6 +8,7 @@ use App\Http\Controllers\ForgetPasswordController;
 use App\Http\Controllers\createtitleController;
 use App\Http\Controllers\DescriptionController;
 use App\Http\Controllers\GoogleDriveController;
+use App\Http\Controllers\upload_id_Controller;
 
 
 Route::get('/', function () {
@@ -39,10 +40,12 @@ Route::prefix('host')->group(function () {
        Route::group(['middleware' => 'auth'], function () {
         Route::get('/title', [createtitleController::class, 'showTitleForm'])->name('title.form');
         Route::post('/title', [createtitleController::class, 'saveTitle'])->name('title.save');
-        Route::get('/description', [DescriptionController::class, 'showDescriptionForm'])->name('description.form');
-        Route::post('/description', [DescriptionController::class, 'saveDescription'])->name('description.save');
+        Route::get('/upload_id', [upload_id_Controller::class, 'showuploadpage'])->name('upload_id.form');
+        Route::post('/upload_id/upload', [upload_id_Controller::class, 'uploadImageToGoogleDrive2'])->name('upload_id.save');
+        Route::get('/description/{spot_id}', [DescriptionController::class, 'showDescriptionForm'])->name('description.form');
+        Route::post('/description/{spot_id}', [DescriptionController::class, 'saveDescription'])->name('description.save');
+        Route::post('/description/update-title/{spot_id}', [DescriptionController::class, 'updateTitle'])->name('description.update-title');
         Route::get('/images', [GoogleDriveController::class, 'showImagesForm'])->name('images.form');
-        Route::post('/upload-images', [GoogleDriveController::class, 'upload'])->name('upload.images');
-
+        Route::post('/images/upload', [GoogleDriveController::class, 'uploadImageToGoogleDrive'])->name('google.upload');
     });
 });

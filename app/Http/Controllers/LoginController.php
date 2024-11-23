@@ -39,11 +39,5 @@ class LoginController extends Controller
             session(['user_id' => $user->id]);
             return redirect()->route('title.form'); // Redirect to a desired route after login
     }
-
-
-
     
-
-    
-
 }

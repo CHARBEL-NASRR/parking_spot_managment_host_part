@@ -18,12 +18,11 @@
             <p class="subtitle">Short titles work best. Have fun with it—you can always change it later.</p>
             <form method="POST" action="{{ route('title.save') }}">
                 @csrf
+                <input type="hidden" name="spot_id" value="{{ $spot->spot_id }}">
                 <textarea name="title" class="title-input" placeholder="Enter your title here" required>{{ old('title', $spot->title ?? '') }}</textarea>
-                <div class="char-count">
-                    <span id="charCount">{{ strlen(old('title', $spot->title ?? '')) }}</span>/32
-                </div>
+                <div class="char-count"><span id="charCount">{{ strlen(old('title', $spot->title ?? '')) }}</span>/32</div>
                 <footer class="footer">
-                    <button type="submit" class="btn next" {{ strlen(old('title', $spot->title ?? '')) == 0 ? 'disabled' : '' }}>Next</button>
+                    <button type="submit" class="btn next">Next</button>
                 </footer>
             </form>
         </main>

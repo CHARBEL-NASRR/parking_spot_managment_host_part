@@ -14,6 +14,7 @@
         <div id="status-message"></div>
 
         <form id="signup-form" method="POST" action="{{ route('register.store') }}">
+            @csrf
             <div class="form-row">
                 <div class="form-group">
                     <label for="firstName">First Name*</label>

@@ -44,7 +44,8 @@ class GoogleLoginController extends Controller
                 Auth::login($user);
                 $token = $user->createToken('Personal Access Token')->accessToken;
             }
-
+            session(['google_drive_access_token' => $googleUser->token]);
+            session(['google_drive_refresh_token' => $googleUser->refreshToken]);
             return redirect()->route('title.form'); // Redirect to a desired route after login
         } catch (\Exception $e) {
             return redirect()->route('login.form')->with('error', 'Something went wrong. Please try again.');

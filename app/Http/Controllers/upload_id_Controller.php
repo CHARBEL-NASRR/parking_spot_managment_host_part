@@ -8,43 +8,37 @@ use Google_Service_Drive;
 use Google_Service_Drive_DriveFile;
 use Illuminate\Support\Facades\Log;
 
-class GoogleDriveController extends Controller
+class upload_id_Controller extends Controller
 {
-    public function showImagesForm()
+    public function showuploadpage()
     {
-        return view('createspot.images_spot');
+        return view('upload_id.upload_id');
     }
 
-    public function uploadImageToGoogleDrive(Request $request)
+    public function uploadImageToGoogleDrive2(Request $request)
     {
         $client = new Google_Client();
         $client->setAuthConfig(storage_path('app/google-drive/credentials.json'));
         $client->addScope(Google_Service_Drive::DRIVE);
 
         $driveService = new Google_Service_Drive($client);
-        $folderId = '13qAJ1sxPIw0wnUvlzuXsAQj2qliAeb6R';  // Replace with your folder ID
+        $folderId = '13qAJ1sxPIw0wnUvlzuXsAQj2qliAeb6R';  
 
         $validation = $request->validate([
-            'images' => 'required|array|min:1|max:1',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'idCard' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Ensure that at least one file is uploaded
-        if (!$request->hasFile('images')) {
+        if (!$request->hasFile('idCard')) {
             Log::error('No files uploaded');
             return response()->json(['error' => 'No files uploaded'], 400);
         }
 
-        // Get the file from the request
-        $file = $request->file('images')[0];
+        $file = $request->file('idCard');
 
-        // Check if the file is valid
         if (!$file->isValid()) {
             Log::error('Invalid file');
             return response()->json(['error' => 'Invalid file'], 400);
         }
-
-        // Upload file to Google Drive
         $fileMetadata = new Google_Service_Drive_DriveFile([
             'name' => $file->getClientOriginalName(),
             'parents' => [$folderId],

@@ -31,13 +31,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // Handle file input change and display the selected image
-        fileInput.addEventListener('change', () => {
+        fileInput.addEventListener('change', async () => {
             const file = fileInput.files[0];
 
             if (file) {
                 const reader = new FileReader();
 
-                reader.onload = function (e) {
+                reader.onload = async function (e) {
                     imageElement.src = e.target.result;
                     imageElement.style.display = 'block'; // Show the image
                     cameraIcon.style.display = 'none'; // Hide the camera icon
@@ -50,17 +50,34 @@ document.addEventListener('DOMContentLoaded', function () {
                         console.log(`Image uploaded in box ${index + 1}`);
                     }
 
+                    // Upload image to the server (Google Drive)
+                    try {
+                        const formData = new FormData();
+                        formData.append('file', file);
+
+                        const response = await fetch('{{ route("google.upload") }}', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}', // Ensure CSRF protection
+                            },
+                        });
+
+                        const data = await response.json();
+                        if (response.ok) {
+                            console.log('File uploaded successfully:', data);
+                        } else {
+                            console.error('File upload failed:', data.error);
+                        }
+                    } catch (error) {
+                        console.error('Error uploading file:', error);
+                    }
+
                     checkNextButtonStatus();
                 };
 
                 reader.readAsDataURL(file);
             }
-        });
-
-        // Edit button functionality
-        const editButton = box.querySelector('.edit-button');
-        editButton.addEventListener('click', () => {
-            fileInput.click(); // Allow user to re-upload the image
         });
 
         // More options button functionality

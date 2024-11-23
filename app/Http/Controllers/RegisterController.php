@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Role;
+use App\Models\UserRole;
 use App\Mail\SignupValidationMail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail; 
@@ -28,7 +30,6 @@ class RegisterController extends Controller
         }
 
         
-
         $user = new User([
             'first_name' => $request->input('first_name'),
             'last_name' => $request->input('last_name'),
@@ -38,14 +39,14 @@ class RegisterController extends Controller
             'google_id' => null,
             'validate_token' => $this->gen_uuid(), 
             'is_valid' => false,
-            'role' => 2,
             'expired_date' => Carbon::now()->addDays(2),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
-        
 
-        $user->save();
+
+    $user->save();
+
 
         $this->sendValidationEmail($user);
 

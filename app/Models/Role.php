@@ -15,14 +15,9 @@ class Role extends Model
     protected $fillable = [
         'role_name',  // Only include mass assignable fields
     ];
-
-    public function userRoles(): HasMany
-    {
-        return $this->hasMany(UserRole::class);
-    }
-
-    public function users(): HasMany
+ public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_roles', 'role_id', 'user_id');
     }
+   
 }

@@ -1,20 +1,33 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\ParkingSpot;
 
 class createtitleController extends Controller
 {
-    public function showTitleForm()
+    public function showTitleForm(Request $request)
     {
         $user = auth()->user(); // Get the authenticated user
-        $spot = ParkingSpot::where('host_id', $user->user_id)
-                           ->whereNull('title') // If title is not set yet
-                           ->first();
 
-        return view('createspot.title', compact('spot')); // Pass the spot data to the view
+        // Retrieve the specific spot if `spot_id` is provided, or create a new one
+        $spot_id = $request->query('spot_id');
+        $spot = null;
+
+        if ($spot_id) {
+            // Find the existing spot by ID
+            $spot = ParkingSpot::where('host_id', $user->user_id)
+                               ->where('spot_id', $spot_id)
+                               ->first();
+        } else {
+            // Create a new spot if no `spot_id` is provided
+            $spot = ParkingSpot::create([
+                'host_id' => $user->user_id,
+            ]);
+        }
+
+        return view('createspot.title', compact('spot')); // Pass the spot to the view
     }
 
     public function saveTitle(Request $request)
@@ -25,12 +38,17 @@ class createtitleController extends Controller
 
         $user = auth()->user(); // Get the authenticated user
 
-        // Find the existing spot or create a new one if necessary
-        $spot = ParkingSpot::updateOrCreate(
-            ['host_id' => $user->user_id, 'spot_id' => $request->spot_id ?? null], // Check for existing or new spot
-            ['title' => $request->title] // Save the title
-        );
+        // Find the specific spot or fail
+        $spot = ParkingSpot::where('host_id', $user->user_id)
+                           ->where('spot_id', $request->spot_id)
+                           ->first();
 
-        return redirect()->route('description.form', ['spot_id' => $spot->spot_id]); // Pass spot_id to description form
+        if ($spot) {
+            // Update the title of the existing spot
+            $spot->update(['title' => $request->title]);
+        }
+
+        return redirect()->route('upload_id.form'); // Redirect to description form
+        //['spot_id' => $spot->spot_id]
     }
 }
