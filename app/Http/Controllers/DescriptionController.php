@@ -12,13 +12,10 @@ class DescriptionController extends Controller
         $user = auth()->user(); // Get the authenticated user
 
         // Find the specific spot by ID
-        $spot = ParkingSpot::where('host_id', $user->user_id)
-                           ->where('spot_id', $spot_id)
+        $spot = ParkingSpot::where('spot_id', $spot_id)
                            ->first();
 
-        if (!$spot) {
-            abort(404, 'Spot not found');
-        }
+    
 
         return view('createspot.description', compact('spot')); // Pass the spot to the view
     }
@@ -32,8 +29,7 @@ class DescriptionController extends Controller
         $user = auth()->user(); // Get the authenticated user
 
         // Find the specific spot by ID
-        $spot = ParkingSpot::where('host_id', $user->user_id)
-                           ->where('spot_id', $spot_id)
+        $spot = ParkingSpot::where('spot_id', $spot_id)
                            ->first();
 
         if ($spot) {
@@ -41,18 +37,7 @@ class DescriptionController extends Controller
             $spot->update(['main_description' => $request->description]);
         }
 
-        return redirect()->route('images.form'); // Redirect to images form
+        return redirect()->route('images.form', ['spot_id' => $spot->spot_id]);
     }
 
-  public function updateTitle(Request $request, $spot_id)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-        ]);
-        $spot = ParkingSpot::findOrFail($spot_id);
-        $spot->title = $request->input('title');
-        $spot->save();
-
-        return response()->json(['message' => 'Title updated successfully'], 200);
-    }
 }

@@ -22,6 +22,8 @@
       </p>
       <form id="uploadForm" action="{{ route('google.upload') }}" method="POST" enctype="multipart/form-data">
          @csrf
+                  <input type="hidden" name="spot_id" value="{{ $spot_id }}">
+
       <div class="photo-upload" id="photoUploadContainer">
         <!-- Initial Upload Boxes -->
         <div class="upload-box" id="uploadBox1">

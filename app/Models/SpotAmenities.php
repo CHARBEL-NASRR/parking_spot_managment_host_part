@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SpotAmenities extends Model
 {
-    protected $table = 'Spot_Amenities';
+    protected $table = 'spot_amenities'; // Ensure the table name matches the migration
     protected $primaryKey = 'amenity_id';  // Custom primary key
     public $incrementing = true;
     protected $keyType = 'int';
+    public $timestamps = false;
 
     protected $fillable = [
-        'amenity_id', 
         'spot_id',
         'is_covered',
         'has_security',
@@ -36,5 +36,4 @@ class SpotAmenities extends Model
     {
         return $this->belongsTo(ParkingSpot::class, 'spot_id');
     }
-
 }

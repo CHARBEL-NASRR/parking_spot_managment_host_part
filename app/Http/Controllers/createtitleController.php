@@ -17,15 +17,9 @@ class createtitleController extends Controller
 
         if ($spot_id) {
             // Find the existing spot by ID
-            $spot = ParkingSpot::where('host_id', $user->user_id)
-                               ->where('spot_id', $spot_id)
-                               ->first();
-        } else {
-            // Create a new spot if no `spot_id` is provided
-            $spot = ParkingSpot::create([
-                'host_id' => $user->user_id,
-            ]);
-        }
+            $spot = ParkingSpot::where('spot_id', $spot_id)
+                                ->first();
+        } 
 
         return view('createspot.title', compact('spot')); // Pass the spot to the view
     }
@@ -39,8 +33,7 @@ class createtitleController extends Controller
         $user = auth()->user(); // Get the authenticated user
 
         // Find the specific spot or fail
-        $spot = ParkingSpot::where('host_id', $user->user_id)
-                           ->where('spot_id', $request->spot_id)
+        $spot = ParkingSpot::where('spot_id', $request->spot_id)
                            ->first();
 
         if ($spot) {
@@ -48,7 +41,7 @@ class createtitleController extends Controller
             $spot->update(['title' => $request->title]);
         }
 
-        return redirect()->route('upload_id.form'); // Redirect to description form
-        //['spot_id' => $spot->spot_id]
+        return redirect()->route('description.form',  ['spot_id' => $spot->spot_id]); // Redirect to description form
+      
     }
 }

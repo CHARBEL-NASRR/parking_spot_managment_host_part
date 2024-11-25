@@ -10,6 +10,7 @@ class Image extends Model
     protected $primaryKey = 'image_id'; // Custom primary key
     public $incrementing = true;
     protected $keyType = 'int';
+    public $timestamps = false;
 
     protected $fillable = [
         'image_id', 

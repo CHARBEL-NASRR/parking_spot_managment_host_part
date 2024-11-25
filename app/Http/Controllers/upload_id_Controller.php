@@ -7,11 +7,13 @@ use Google_Client;
 use Google_Service_Drive;
 use Google_Service_Drive_DriveFile;
 use Illuminate\Support\Facades\Log;
+use App\Models\HostDetail;
 
 class upload_id_Controller extends Controller
 {
     public function showuploadpage()
     {
+        
         return view('upload_id.upload_id');
     }
 
@@ -60,7 +62,14 @@ class upload_id_Controller extends Controller
             Log::error('File upload failed: ' . $e->getMessage());
             return response()->json(['error' => 'File upload failed: ' . $e->getMessage()], 500);
         }
+        $user = auth()->user(); // Get the authenticated user
 
-        return response()->json(['message' => 'File uploaded successfully!']);
+            $Host = new HostDetail();
+            $Host->user_id = $user->user_id; // Add user_id
+            $Host->id_card = 'https://drive.google.com/uc?id=' . $uploadedFile->id;
+            $Host->save();
+
+            session(['host_id' => $Host->host_id]); // Store the host_id in the session
+        return redirect()->route('amenities.show')->with('success', 'Your account has been validated successfully! Please log in.');
     }
 }

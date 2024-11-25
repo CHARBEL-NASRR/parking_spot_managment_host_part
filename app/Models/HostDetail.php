@@ -11,6 +11,7 @@ class HostDetail extends Model
     protected $primaryKey = 'host_id';  // Custom primary key
     public $incrementing = true;
     protected $keyType = 'int';
+    public $timestamps = false;
 
     protected $fillable = [
         'host_id',

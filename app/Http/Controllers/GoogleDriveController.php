@@ -7,12 +7,13 @@ use Google_Client;
 use Google_Service_Drive;
 use Google_Service_Drive_DriveFile;
 use Illuminate\Support\Facades\Log;
+use App\Models\Image;
 
 class GoogleDriveController extends Controller
 {
-    public function showImagesForm()
+    public function showImagesForm($spot_id)
     {
-        return view('createspot.images_spot');
+        return view('createspot.images_spot', compact('spot_id'));
     }
 
     public function uploadImageToGoogleDrive(Request $request)
@@ -25,8 +26,9 @@ class GoogleDriveController extends Controller
         $folderId = '13qAJ1sxPIw0wnUvlzuXsAQj2qliAeb6R';  // Replace with your folder ID
 
         $validation = $request->validate([
-            'images' => 'required|array|min:1|max:1',
+            'images' => 'required|array|min:3|max:5',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'spot_id' => 'required|exists:parking_spots,spot_id',
         ]);
 
         // Ensure that at least one file is uploaded
@@ -35,38 +37,47 @@ class GoogleDriveController extends Controller
             return response()->json(['error' => 'No files uploaded'], 400);
         }
 
-        // Get the file from the request
-        $file = $request->file('images')[0];
+        // Get the files from the request
+        $files = $request->file('images');
+        $spotId = $request->input('spot_id');
 
-        // Check if the file is valid
-        if (!$file->isValid()) {
-            Log::error('Invalid file');
-            return response()->json(['error' => 'Invalid file'], 400);
+        foreach ($files as $file) {
+            // Check if the file is valid
+            if (!$file->isValid()) {
+                Log::error('Invalid file');
+                return response()->json(['error' => 'Invalid file'], 400);
+            }
+
+            // Upload file to Google Drive
+            $fileMetadata = new Google_Service_Drive_DriveFile([
+                'name' => $file->getClientOriginalName(),
+                'parents' => [$folderId],
+            ]);
+
+            $fileContent = file_get_contents($file->getRealPath());
+            try {
+                $uploadedFile = $driveService->files->create(
+                    $fileMetadata,
+                    [
+                        'data' => $fileContent,
+                        'mimeType' => $file->getMimeType(),
+                        'uploadType' => 'multipart',
+                        'fields' => 'id, name, mimeType, parents',
+                    ]
+                );
+                Log::info('File uploaded to Google Drive', ['file' => $uploadedFile]);
+
+                // Save the image URL to the database
+                $image = new Image();
+                $image->spot_id = $spotId;
+                $image->image_url = 'https://drive.google.com/uc?id=' . $uploadedFile->id;
+                $image->save();
+            } catch (\Exception $e) {
+                Log::error('File upload failed: ' . $e->getMessage());
+                return response()->json(['error' => 'File upload failed: ' . $e->getMessage()], 500);
+            }
         }
 
-        // Upload file to Google Drive
-        $fileMetadata = new Google_Service_Drive_DriveFile([
-            'name' => $file->getClientOriginalName(),
-            'parents' => [$folderId],
-        ]);
-
-        $fileContent = file_get_contents($file->getRealPath());
-        try {
-            $uploadedFile = $driveService->files->create(
-                $fileMetadata,
-                [
-                    'data' => $fileContent,
-                    'mimeType' => $file->getMimeType(),
-                    'uploadType' => 'multipart',
-                    'fields' => 'id, name, mimeType, parents',
-                ]
-            );
-            Log::info('File uploaded to Google Drive', ['file' => $uploadedFile]);
-        } catch (\Exception $e) {
-            Log::error('File upload failed: ' . $e->getMessage());
-            return response()->json(['error' => 'File upload failed: ' . $e->getMessage()], 500);
-        }
-
-        return response()->json(['message' => 'File uploaded successfully!']);
-    }
+return redirect()->route('location.form', ['spot_id' => $spotId]);    
+}
 }

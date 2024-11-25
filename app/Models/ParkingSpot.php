@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
+
 class ParkingSpot extends Model
 {
     protected $table = 'Parking_Spots';
     protected $primaryKey = 'spot_id';  // Custom primary key
     public $incrementing = true;
     protected $keyType = 'int';
+    public $timestamps = false;
 
     protected $fillable = [
         'spot_id',
