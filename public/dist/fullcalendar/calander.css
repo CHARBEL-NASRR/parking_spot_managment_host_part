@@ -1,0 +1,33 @@
+ body,
+ html {
+     margin: 0;
+     padding: 0;
+     height: 100%;
+     font-family: 'Arial', sans-serif;
+ }
+
+ #calendar-container {
+     display: flex;
+     height: 100%;
+ }
+
+ #calendar {
+     flex: 1;
+     border: 1px solid #ddd;
+     padding: 10px;
+     background-color: #f9f9f9;
+     border-radius: 5px;
+ }
+
+ #dropdown-container {
+     width: 250px;
+     padding: 20px;
+     background-color: #f4f4f4;
+     border-left: 1px solid #ddd;
+ }
+
+ .form-select {
+     padding: 10px;
+     border-radius: 5px;
+     margin-top: 10px;
+ }

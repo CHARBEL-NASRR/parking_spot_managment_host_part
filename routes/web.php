@@ -11,6 +11,9 @@ use App\Http\Controllers\GoogleDriveController;
 use App\Http\Controllers\upload_id_Controller;
 use App\Http\Controllers\AmennitiesController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\SpotsController;
+use App\Http\Controllers\ProfileController;
 
 
 Route::get('/', function () {
@@ -43,10 +46,6 @@ Route::prefix('host')->group(function () {
         
         Route::get('/location',[LocationController::class,'showLocationForm'])->name('location.form');
         Route::post('/googlemap',[LocationController::class,'saveLocation'])->name('save-location');
-
-        Route::get('/dashboard', function () {
-            return view('dashboard.dashboard');
-        })->name('dashboard');
         Route::get('/amenities', [AmennitiesController::class, 'showAmenitiesForm'])->name('amenities.show');
         Route::post('/amenities/save', [AmennitiesController::class, 'submitAmenities'])->name('amenities.save');
         Route::get('/title', [createtitleController::class, 'showTitleForm'])->name('title.form');
@@ -57,5 +56,22 @@ Route::prefix('host')->group(function () {
         Route::post('/description/{spot_id}', [DescriptionController::class, 'saveDescription'])->name('description.save');
         Route::get('/images/{spot_id}', [GoogleDriveController::class, 'showImagesForm'])->name('images.form');
         Route::post('/images/upload', [GoogleDriveController::class, 'uploadImageToGoogleDrive'])->name('google.upload');
+
+
+
+
+        Route::get('/dashboard', function () {
+            return view('dashboard.dashboard');
+        })->name('dashboard');
+        Route::get('/calendar/{spot_id?}', [CalendarController::class, 'showCalendar'])->name('calendar');
+        Route::get('/calendar/events/{spot_id}', [CalendarController::class, 'getSpotEvents'])->name('calendar.events');
+        Route::post('/calendar/save', [CalendarController::class, 'saveAvailability'])->name('calendar.save');
+        Route::post('/calendar/delete', [CalendarController::class, 'deleteAvailability'])->name('calendar.delete');
+        Route::post('/calendar/update', [CalendarController::class, 'updateAvailability'])->name('calendar.update');
+        Route::get('/spots', [SpotsController::class, 'showSpots'])->name('spots.show');
+        Route::get('/profile',[ProfileController::class,'showProfileForm'])->name('profile.show');
+        Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
+
+
     });
 });

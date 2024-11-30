@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('Availability', function (Blueprint $table) {
-            $table->id('availability_id');  // Custom primary key
+        Schema::create('availability', function (Blueprint $table) {
+            $table->id('availability_id'); 
             $table->unsignedBigInteger('spot_id');
-            $table->timestamp('start_time_availability');
-            $table->timestamp('end_time_availability');
-            $table->string('day');
-
-            $table->foreign('spot_id')->references('spot_id')->on('Parking_Spots')->onDelete('cascade');
+            $table->time('start_time_availability'); 
+            $table->time('end_time_availability');    
+            $table->integer('day');  
+            $table->foreign('spot_id')->references('spot_id')->on('parking_spots')->onDelete('cascade');
         });
     }
 
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('availabilities');
+        Schema::dropIfExists('availability');
     }
 };

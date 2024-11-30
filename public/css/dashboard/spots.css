@@ -1,0 +1,109 @@
+/* General Styles */
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* Icons Bar */
+.icons-bar {
+    gap: 10px;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #333;
+    transition: color 0.3s ease-in-out;
+}
+
+.icon-btn:hover {
+    color: #555;
+}
+
+/* Search Box */
+.search-box {
+    margin-bottom: 20px;
+    display: none;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.search-box.d-flex {
+    display: flex !important;
+}
+
+.search-box.w-100 {
+    width: 100%;
+}
+
+.search-box input {
+    width: 100%;
+}
+
+/* Cards */
+.listing-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease-in-out;
+}
+
+.listing-card:hover {
+    transform: translateY(-5px);
+}
+
+.badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 5px 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border-radius: 20px;
+    color: #fff;
+}
+
+.badge-in-progress {
+    background-color: #ff9800;
+}
+
+.badge-approved {
+    background-color: #4caf50;
+}
+
+.badge-pending {
+    background-color: #f44336;
+}
+
+.image-container {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-bottom: 1px solid #ddd;
+}
+
+.listing-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.listing-details {
+    padding: 15px;
+}
+
+.listing-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.listing-location,
+.listing-date {
+    font-size: 0.9rem;
+    color: #777;
+}

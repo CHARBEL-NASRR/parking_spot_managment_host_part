@@ -46,7 +46,7 @@ class GoogleLoginController extends Controller
             }
             session(['google_drive_access_token' => $googleUser->token]);
             session(['google_drive_refresh_token' => $googleUser->refreshToken]);
-            return redirect()->route('upload_id.form'); // Redirect to a desired route after login
+            return redirect()->route('dashboard');
         } catch (\Exception $e) {
             return redirect()->route('login.form')->with('error', 'Something went wrong. Please try again.');
         }
