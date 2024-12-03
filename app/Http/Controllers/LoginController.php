@@ -37,7 +37,7 @@ class LoginController extends Controller
          $token = $user->createToken('Personal Access Token')->accessToken;
             Auth::login($user);
             session(['user_id' => $user->id]);
-            return redirect()->route('title.form'); // Redirect to a desired route after login
+            return redirect()->route('dashboard'); // Redirect to a desired route after login
     }
     
 }

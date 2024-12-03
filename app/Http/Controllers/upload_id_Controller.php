@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Google_Client;
 use Google_Service_Drive;
 use Google_Service_Drive_DriveFile;
+use Google_Service_Drive_Permission;
 use Illuminate\Support\Facades\Log;
 use App\Models\HostDetail;
 
@@ -63,10 +64,16 @@ class upload_id_Controller extends Controller
             return response()->json(['error' => 'File upload failed: ' . $e->getMessage()], 500);
         }
         $user = auth()->user(); // Get the authenticated user
+                $permission = new Google_Service_Drive_Permission();
+                $permission->setRole('reader');
+                $permission->setType('anyone');
+                $driveService->permissions->create($uploadedFile->id, $permission);
+
+
 
             $Host = new HostDetail();
             $Host->user_id = $user->user_id; // Add user_id
-            $Host->id_card = 'https://drive.google.com/uc?id=' . $uploadedFile->id;
+            $Host->id_card = $uploadedFile->id;
             $Host->save();
 
             session(['host_id' => $Host->host_id]); // Store the host_id in the session

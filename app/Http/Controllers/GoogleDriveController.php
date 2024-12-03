@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Google_Client;
 use Google_Service_Drive;
 use Google_Service_Drive_DriveFile;
+use Google_Service_Drive_Permission;
 use Illuminate\Support\Facades\Log;
 use App\Models\Image;
 
@@ -67,10 +68,15 @@ class GoogleDriveController extends Controller
                 );
                 Log::info('File uploaded to Google Drive', ['file' => $uploadedFile]);
 
+                $permission = new Google_Service_Drive_Permission();
+                $permission->setRole('reader');
+                $permission->setType('anyone');
+                $driveService->permissions->create($uploadedFile->id, $permission);
+
                 // Save the image URL to the database
                 $image = new Image();
                 $image->spot_id = $spotId;
-                $image->image_url = 'https://drive.google.com/uc?id=' . $uploadedFile->id;
+                $image->image_url = $uploadedFile->id;
                 $image->save();
             } catch (\Exception $e) {
                 Log::error('File upload failed: ' . $e->getMessage());

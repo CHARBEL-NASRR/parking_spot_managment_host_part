@@ -11,6 +11,8 @@ class Wallet extends Model
     protected $primaryKey = 'wallet_id'; // Custom primary key
     public $incrementing = true;
     protected $keyType = 'int';
+    public $timestamps = false; // Disable timestamps
+
 
     protected $fillable = [
         'user_id',

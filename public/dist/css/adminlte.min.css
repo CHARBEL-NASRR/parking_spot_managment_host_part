@@ -6714,9 +6714,6 @@ a.disabled.mailbox-attachment-close {
     opacity: 0
 }
 
-.modal-backdrop.show {
-    opacity: .5
-}
 
 .modal-header {
     display: -ms-flexbox;
@@ -33022,6 +33019,8 @@ html.maximized-card {
 .dark-mode .modal-content.bg-success .modal-header {
     border-color: #fff
 }
+
+
 
 .toasts-top-right {
     position: absolute;

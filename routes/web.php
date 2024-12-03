@@ -14,6 +14,10 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\SpotsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\DashboardController;
 
 
 Route::get('/', function () {
@@ -71,7 +75,12 @@ Route::prefix('host')->group(function () {
         Route::get('/spots', [SpotsController::class, 'showSpots'])->name('spots.show');
         Route::get('/profile',[ProfileController::class,'showProfileForm'])->name('profile.show');
         Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
-
-
+        Route::post('/profile/sendticket',[TicketController::class,'store'])->name('tickets.store');
+        Route::get('/notifications/count', [NotificationController::class, 'getNewMessagesCount'])->name('notifications.count');
+        Route::get('/notifications/tickets', [NotificationController::class, 'getTickets'])->name('notifications.tickets');
+        Route::get('/booking/requested',[BookingController::class,'getRequestedBookings'])->name('bookings.requested');
+        Route::post('/booking/update/{id}',[BookingController::class,'updateBookingStatus'])->name('bookings.update');
+        Route::get('/bookings/last', [BookingController::class, 'getLastBookings'])->name('dashboard.bookings');   
+        Route::get('/booking/{id}', [BookingController::class, 'getBooking'])->name('bookings.show');
     });
 });

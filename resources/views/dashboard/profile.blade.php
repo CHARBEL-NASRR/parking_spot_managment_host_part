@@ -21,10 +21,14 @@
             <h3 class="profile-username text-center">{{ $user->first_name }}</h3>
             <ul class="list-group list-group-unbordered mb-3">
               <li class="list-group-item">
-                <b>Accepted bookings</b> <a class="float-right">{{ $user->accepted_bookings }}</a>
+                <b>Accepted bookings</b> <a class="float-right">{{ $acceptedBookings }}</a>
               </li>
               <li class="list-group-item">
                 <b>Rating</b> <a class="float-right">{{ number_format($averageRating, 2) }}</a>
+              </li>
+
+               <li class="list-group-item">
+                <b>Wallet</b> <a class="float-right">{{ number_format($walletBalance, 2) }}</a>
               </li>
             </ul>
           </div>
@@ -75,7 +79,7 @@
                 </form>
               </div>
               <div class="tab-pane" id="timeline">
-                <form class="form-horizontal" id="ticketForm" >
+                <form class="form-horizontal" id="ticketForm" method="POST" action="{{ route('tickets.store') }}">
                   @csrf
                   <div class="form-group row">
                     <label for="ticketType" class="col-sm-2 col-form-label">Ticket Type</label>
@@ -117,5 +121,6 @@
 @endsection
 
 @section('scripts')
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 @endsection
