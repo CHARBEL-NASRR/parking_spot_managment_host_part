@@ -79,27 +79,46 @@ Route::prefix('host')->group(function () {
             return view('dashboard.dashboard');
         })->name('dashboard');
         Route::get('/dashboard/revenue-data', [DashboardController::class, 'getRevenueData'])->name('dashboard.revenue-data');
-
+        Route::get('/dashboard/monthly-profit', [DashboardController::class, 'getmonthlyprofit'])->name('dashboard.monthly-profit');
+        Route::get('/dashboard/daily-profit', [DashboardController::class, 'getdailyprofit'])->name('dashboard.daily-profit');
+        Route::get('/dashboard/deals-completed', [DashboardController::class, 'getdealcompleted'])->name('dashboard.deals-completed');
+        Route::get('/dashboard/overall-rating', [DashboardController::class, 'getoverallrating'])->name('dashboard.overall-rating');        
+        
+        
+        
         Route::get('/calendar/{spot_id?}', [CalendarController::class, 'showCalendar'])->name('calendar');
         Route::get('/calendar/events/{spot_id}', [CalendarController::class, 'getSpotEvents'])->name('calendar.events');
         Route::post('/calendar/save', [CalendarController::class, 'saveAvailability'])->name('calendar.save');
         Route::post('/calendar/delete', [CalendarController::class, 'deleteAvailability'])->name('calendar.delete');
         Route::post('/calendar/update', [CalendarController::class, 'updateAvailability'])->name('calendar.update');
+       
+       
         Route::get('/spots', [SpotsController::class, 'showSpots'])->name('spots.show');
+       
+       
+       
         Route::get('/profile',[ProfileController::class,'showProfileForm'])->name('profile.show');
         Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
         Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
         Route::post('/profile/change-picture', [ProfileController::class, 'changeProfilePicture'])->name('profile.change-picture');        Route::post('/profile/sendticket',[TicketController::class,'store'])->name('tickets.store');
+       
+       
         Route::get('/notifications/count', [NotificationController::class, 'getNewMessagesCount'])->name('notifications.count');
         Route::get('/notifications/tickets', [NotificationController::class, 'getTickets'])->name('notifications.tickets');
+       
+       
         Route::get('/booking/requested',[BookingController::class,'getRequestedBookings'])->name('bookings.requested');
         Route::post('/booking/update/{id}',[BookingController::class,'updateBookingStatus'])->name('bookings.update');
         Route::get('/bookings/last', [BookingController::class, 'getLastBookings'])->name('dashboard.bookings');   
         Route::get('/booking/{id}', [BookingController::class, 'getBooking'])->name('bookings.show');
+      
+      
         Route::get('/upcoming-bookings', [UpcomingBookingsController::class, 'getUpcomingBookings'])->name('upcoming.bookings');
         Route::get('/upcoming-bookings/view', [UpcomingBookingsController::class, 'viewUpcomingBookings'])->name('upcoming.bookings.view');
-    Route::get('/messages', [ChatController::class, 'index'])->name('messages.index');
-    Route::post('/messages', [ChatController::class, 'send'])->name('messages.send');
+    
+    
+        Route::get('/messages', [ChatController::class, 'index'])->name('messages.index');
+        Route::post('/messages', [ChatController::class, 'send'])->name('messages.send');
     });
     
 });

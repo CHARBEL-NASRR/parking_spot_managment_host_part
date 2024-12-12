@@ -15,16 +15,15 @@
 
     
     <!-- Icons Section -->
-    <div class="icons-bar d-flex justify-content-end mb-3">
-        <button class="icon-btn" id="search-icon">
+    <div class="iconss-bar d-flex justify-content-end mb-3">
+        <button class="icons-btn" id="search-icon">
             <i class="fas fa-search"></i>
         </button>
-        <button class="icon-btn">
+        <button class="icons-btn">
             <i class="fas fa-plus"></i>
         </button>
     </div>
     
-    <!-- Search Input -->
     <div id="search-box" class="search-box d-none">
         <input type="text" id="search-input" class="form-control" placeholder="Search for a spot..." />
     </div>
@@ -33,14 +32,14 @@
         @foreach($spots as $spot)
             <div class="col-12 col-sm-6 col-lg-4 mb-4">
                 <div class="listing-card">
-                    <!-- Badge -->
                     <div class="badge {{ $spot->status == 'in-progress' ? 'badge-in-progress' : ($spot->status == 'approved' ? 'badge-approved' : 'badge-pending') }}">
                         {{ $spot->status == 'in-progress' ? 'In progress' : ($spot->status == 'approved' ? 'Approved' : 'Pending') }}
                     </div>
-                    <!-- Image -->
+                    
                     <div class="image-container">
-                        <img src="{{ $spot->image ? $spot->image->image_url : asset('storage/default.jpg') }}" 
+                        <iframe src="{{ $spot->image ? $spot->image->image_url : asset('storage/default.jpg') }}" 
                              alt="{{ $spot->title }}" class="listing-image">
+                            </iframe>
                     </div>
 
                     <!-- Details -->
@@ -66,15 +65,13 @@
         const searchBox = document.getElementById('search-box');
         const searchInput = document.getElementById('search-input');
 
-        // Toggle the search input visibility
         searchIcon.addEventListener('click', () => {
             searchBox.classList.toggle('d-none');
             searchBox.classList.toggle('d-flex');
             searchBox.classList.toggle('w-100');
-            searchInput.focus(); // Focus on input when opened
+            searchInput.focus(); 
         });
 
-        // Add functionality to filter spots (optional)
         searchInput.addEventListener('input', function () {
             const query = searchInput.value.toLowerCase();
             const cards = document.querySelectorAll('.listing-card');
@@ -84,9 +81,9 @@
                 const location = card.querySelector('.listing-location').textContent.toLowerCase();
                 
                 if (title.includes(query) || location.includes(query)) {
-                    card.parentElement.style.display = 'block'; // Show the matching card
+                    card.parentElement.style.display = 'block'; 
                 } else {
-                    card.parentElement.style.display = 'none'; // Hide non-matching cards
+                    card.parentElement.style.display = 'none'; 
                 }
             });
         });

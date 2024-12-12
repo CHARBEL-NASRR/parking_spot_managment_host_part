@@ -30,8 +30,11 @@ class ProfileController extends Controller
 
             $wallet = Wallet::where('user_id', $user->user_id)->first();
             $walletBalance = $wallet ? $wallet->balance : 0;
-            $profilePictureUrl = 'https://drive.google.com/uc?export=view&id=' . $hostDetail->id_card;
-
+            
+        $fileUrl = $hostDetail->id_card;
+        preg_match('/id=([a-zA-Z0-9_-]+)/', $fileUrl, $matches);
+        
+        $profilePictureUrl = isset($matches[1]) ? 'https://drive.google.com/file/d/' . $matches[1] . '/preview' : 'default_image_url';
             $spots = ParkingSpot::where('host_id', $host_id)->get();
 
             $totalRating = $spots->sum('overall_rating');
@@ -51,6 +54,63 @@ class ProfileController extends Controller
 
         return view('dashboard.profile', compact('user', 'profilePictureUrl', 'averageRating', 'walletBalance', 'acceptedBookings'));
     }
+//     public function showProfileForm()
+// {
+//     $user = auth()->user();
+
+//     $hostDetail = HostDetail::where('user_id', $user->user_id)->first();
+
+//     if ($hostDetail) {
+//         $host_id = $hostDetail->host_id;
+
+//         $wallet = Wallet::where('user_id', $user->user_id)->first();
+//         $walletBalance = $wallet ? $wallet->balance : 0;
+//         error_log($hostDetail->id_card);
+//         $profilePictureUrl = $this->convertGoogleDriveLink($hostDetail->id_card);  // Convert Google Drive link to proxy
+
+//         $spots = ParkingSpot::where('host_id', $host_id)->get();
+
+//         $totalRating = $spots->sum('overall_rating');
+//         $numberOfSpots = $spots->count();
+//         $averageRating = $numberOfSpots > 0 ? $totalRating / $numberOfSpots : 0;
+
+//         $spotIds = $spots->pluck('spot_id');
+//         $acceptedBookings = Booking::whereIn('spot_id', $spotIds)
+//             ->where('status', 'accepted')
+//             ->count();
+//     } else {
+//         $profilePictureUrl = asset('storage/images/default_profile.jpg'); // Default image if no host details
+//         $averageRating = 0;
+//         $walletBalance = 0;
+//         $acceptedBookings = 0;
+//     }
+
+//     return view('dashboard.profile', compact('user', 'profilePictureUrl', 'averageRating', 'walletBalance', 'acceptedBookings'));
+// }
+
+// /**
+//  * Convert Google Drive link to a proxy URL.
+//  *
+//  * @param string $googleDriveUrl
+//  * @return string|null
+//  */
+// private function convertGoogleDriveLink($googleDriveUrl)
+// {
+//     // Check if the URL is a Google Drive link
+//     if (strpos($googleDriveUrl, 'drive.google.com') !== false) {
+//         // Extract file ID from the Google Drive URL
+//         preg_match('/d\/([a-zA-Z0-9_-]+)/', $googleDriveUrl, $matches);
+//         $fileId = $matches[1] ?? null;
+
+//         if ($fileId) {
+//             // Return the proxy URL that will serve the image via the fetchDriveImage method
+//             return url("/drive-image/{$fileId}");
+//         }
+//     }
+
+//     // Return the URL unchanged if it's not a Google Drive link
+//     return $googleDriveUrl;
+// }
 
 
 
@@ -117,12 +177,11 @@ class ProfileController extends Controller
                         ]
                     );
 
-                    // Set file permissions to public
                     $permission = new Google_Service_Drive_Permission();
                     $permission->setRole('reader');
                     $permission->setType('anyone');
                     $driveService->permissions->create($uploadedFile->id, $permission);
-                    $fileUrl= 'https://drive.google.com/uc?export=view&id=' . $uploadedFile->id;
+                    $fileUrl=$uploadedFile->id;
                     $hostDetail->id_card = $fileUrl;
                     $hostDetail->save();
 

@@ -36,7 +36,6 @@ class CalendarController extends Controller
         $endTime = $availability->end_time_availability;
         $dayOfWeek = $availability->day;
 
-        // Generate a single event for the correct day of the current week
         $date = new \DateTime();
         $date->setISODate((int)date('o'), (int)date('W'), $dayOfWeek);
         $events[] = [

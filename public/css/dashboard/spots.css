@@ -5,11 +5,11 @@
 }
 
 /* Icons Bar */
-.icons-bar {
+.iconss-bar {
     gap: 10px;
 }
 
-.icon-btn {
+.icons-btn {
     background: none;
     border: none;
     cursor: pointer;
@@ -18,7 +18,7 @@
     transition: color 0.3s ease-in-out;
 }
 
-.icon-btn:hover {
+.icons-btn:hover {
     color: #555;
 }
 

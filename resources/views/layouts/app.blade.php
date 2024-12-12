@@ -36,11 +36,7 @@
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <!-- Navbar Search -->
-      <li class="nav-item">
-        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-          <i class="fas fa-search"></i>
-        </a>
-      </li>
+   
 
       <!-- Messages Dropdown Menu -->
       <li class="nav-item dropdown">
@@ -67,11 +63,7 @@
           <i class="fas fa-expand-arrows-alt"></i>
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#" role="button">
-          <i class="fas fa-th-large"></i>
-        </a>
-      </li>
+    
     </ul>
   </nav>
   <!-- /.navbar -->
@@ -81,18 +73,13 @@
     <!-- Brand Logo -->
     <div class="brand-link">
       <img src="{{ asset('images/logo_parkingspot.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">Host</span>
+      <span class="brand-text font-weight-light">{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</span>
     </div>
 
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        
-        <div class="info">
-          <a  class="d-block">{{ auth()->user()->name }}</a>
-        </div>
-      </div>
+ 
 
       <!-- SidebarSearch Form -->
       <div class="form-inline">

@@ -36,6 +36,9 @@ class SpotsController extends Controller
         // Add image and address to each spot
         foreach ($spots as $spot) {
             $spot->image = Image::where('spot_id', $spot->spot_id)->first();
+            preg_match('/id=([a-zA-Z0-9_-]+)/', $spot->image, $matches);
+             $profilePictureUrl = isset($matches[1]) ? 'https://drive.google.com/file/d/' . $matches[1] . '/preview' : 'default_image_url';
+
             $spot->address = SpotLocation::where('spot_id', $spot->spot_id)->first();
         }
 

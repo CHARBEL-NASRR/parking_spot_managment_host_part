@@ -34,4 +34,10 @@ class NotificationController extends Controller
 
         return response()->json(['tickets' => $tickets]);
     }
+
+
+public function getFullName() {
+    $user = auth()->user();
+    return $user->first_name . ' ' . $user->last_name; 
+}
 }

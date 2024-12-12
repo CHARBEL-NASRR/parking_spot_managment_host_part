@@ -9,13 +9,7 @@
 
 @section('content')
 <div class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1 class="m-0">Dashboard</h1>
-      </div><!-- /.col -->
-    </div><!-- /.row -->
-  </div><!-- /.container-fluid -->
+  
 </div>
 <!-- /.content-header -->
 
@@ -94,9 +88,7 @@
                 <li class="nav-item">
                   <a class="nav-link active" href="#revenue-chart" data-toggle="tab">Area</a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#sales-chart" data-toggle="tab">Donut</a>
-                </li>
+             
               </ul>
             </div>
           </div><!-- /.card-header -->
@@ -178,6 +170,7 @@
 <script src="{{ asset('plugins/jquery-ui/jquery-ui.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
 <script>
   $.widget.bridge('uibutton', $.ui.button)
@@ -190,14 +183,17 @@
 <script src="{{ asset('dist/js/demo.js') }}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
-
 <script>
 $(document).ready(function() {
-    // Fetch revenue data
+    // Fetch revenue data from the backend route
     $.ajax({
-        url: '{{ route('dashboard.revenue-data') }}',
+        url: '{{ route('dashboard.revenue-data') }}',  // This should match the route you created
         method: 'GET',
         success: function(data) {
+            // Assuming the backend returns data in this structure:
+            // [{ "date": "2024-12-12", "total": 150 }, ...]
+            
+            // Extract labels (dates) and revenue data (totals)
             var labels = data.map(function(item) {
                 return item.date;
             });
@@ -205,7 +201,7 @@ $(document).ready(function() {
                 return item.total;
             });
 
-            // Create the area chart
+            // Create the area chart dynamically with the fetched data
             var ctx = document.getElementById('revenue-chart-canvas').getContext('2d');
             var revenueChart = new Chart(ctx, {
                 type: 'line',
@@ -261,4 +257,5 @@ $(document).ready(function() {
     });
 });
 </script>
+
 @endsection

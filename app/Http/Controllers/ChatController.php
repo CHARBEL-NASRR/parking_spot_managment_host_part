@@ -47,19 +47,16 @@ class ChatController extends Controller
         // Get the logged-in user's host details
         $host = HostDetail::where('user_id', Auth::id())->first();
 
-        // Ensure the user is associated with a host
         if (!$host) {
             return redirect()->back()->withErrors('You are not associated with any host.');
         }
 
-        // Create the message and store it in the database
         $message = Message::create([
             'sender' => $host->host_id,
             'receiver' => $request->receiver_id,
             'message' => $request->message,
         ]);
 
-        // Broadcast the message event
     broadcast(new MessageSent($message))->toOthers();
 
         return back()->with('success', 'Message sent successfully!');

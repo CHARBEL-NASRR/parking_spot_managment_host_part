@@ -29,9 +29,10 @@
         <div class="card card-primary card-outline">
           <div class="card-body box-profile">
             <div class="text-center">
-              <img class="profile-user-img img-fluid img-circle"
+              <iframe class="profile-user-img img-fluid img-circle"
                    src="{{ $profilePictureUrl }}"
-                   alt="User profile picture" data-toggle="modal" data-target="#profileImageModal">
+                   alt="User profile picture" data-toggle="modal" data-target="#profileImageModal" allow="autoplay">
+                  </iframe>
             </div>
             <h3 class="profile-username text-center">{{ $user->first_name }}</h3>
             <ul class="list-group list-group-unbordered mb-3">
