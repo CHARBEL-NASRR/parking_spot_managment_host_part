@@ -28,4 +28,20 @@ class DashboardController extends Controller
 
         return response()->json(['bookings' => $bookings]);
     }
+
+
+        public function getRevenueData()
+    {
+        // Fetch revenue data from the database
+        // Adjust the query according to your database structure.
+        $revenues = Booking::selectRaw('DATE(created_at) as date, SUM(total_price) as total')
+            ->whereIn('status', ['accepted'])
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->get();
+
+        return response()->json($revenues);
+    }
+
+
 }

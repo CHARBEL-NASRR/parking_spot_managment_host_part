@@ -4,7 +4,9 @@
 @section('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
 @endsection
+
 @section('content')
 <div class="content-header">
   <div class="container-fluid">
@@ -27,7 +29,7 @@
         <div class="small-box bg-info">
           <div class="inner">
             <h3>150</h3>
-            <p>income per month</p>
+            <p>Income per month</p>
           </div>
           <div class="icon">
             <i class="ion ion-bag"></i>
@@ -40,7 +42,7 @@
         <div class="small-box bg-success">
           <div class="inner">
             <h3>53</h3>
-            <p>income per day</p>
+            <p>Income per day</p>
           </div>
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
@@ -53,7 +55,7 @@
         <div class="small-box bg-warning">
           <div class="inner">
             <h3>44</h3>
-            <p>deals completed</p>
+            <p>Deals completed</p>
           </div>
           <div class="icon">
             <i class="ion ion-person-add"></i>
@@ -66,7 +68,7 @@
         <div class="small-box bg-danger">
           <div class="inner">
             <h3>4</h3>
-            <p>overall rating /5</p>
+            <p>Overall rating /5</p>
           </div>
           <div class="icon">
             <i class="ion ion-pie-graph"></i>
@@ -85,7 +87,7 @@
           <div class="card-header">
             <h3 class="card-title">
               <i class="fas fa-chart-pie mr-1"></i>
-              income
+              Revenue
             </h3>
             <div class="card-tools">
               <ul class="nav nav-pills ml-auto">
@@ -180,29 +182,83 @@
 <script>
   $.widget.bridge('uibutton', $.ui.button)
 </script>
-<!-- Bootstrap 4 -->
 <!-- ChartJS -->
-<script src="{{ asset('plugins/chart.s/Chart.min.js') }}"></script>
-<!-- Sparkline -->
-<script src="{{ asset('plugins/sparklines/sparkline.js') }}"></script>
-<!-- JQVMap -->
-<script src="{{ asset('plugins/jqvmap/jquery.vmap.min.js') }}"></script>
-<script src="{{ asset('plugins/jqvmap/maps/jquery.vmap.usa.js') }}"></script>
-<!-- jQuery Knob Chart -->
-<script src="{{ asset('plugins/jquery-knob/jquery.knob.min.js') }}"></script>
-<!-- daterangepicker -->
-<script src="{{ asset('plugins/moment/moment.min.js') }}"></script>
-<script src="{{ asset('plugins/daterangepicker/daterangepicker.js') }}"></script>
-<!-- Tempusdominus Bootstrap 4 -->
-<script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
-<!-- Summernote -->
-<script src="{{ asset('plugins/summernote/summernote-bs4.min.js') }}"></script>
-<!-- overlayScrollbars -->
-<script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
+<script src="{{ asset('plugins/chart.js/Chart.min.js') }}"></script>
 <!-- AdminLTE App -->
 <script src="{{ asset('dist/js/adminlte.js') }}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{ asset('dist/js/demo.js') }}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
+
+<script>
+$(document).ready(function() {
+    // Fetch revenue data
+    $.ajax({
+        url: '{{ route('dashboard.revenue-data') }}',
+        method: 'GET',
+        success: function(data) {
+            var labels = data.map(function(item) {
+                return item.date;
+            });
+            var revenues = data.map(function(item) {
+                return item.total;
+            });
+
+            // Create the area chart
+            var ctx = document.getElementById('revenue-chart-canvas').getContext('2d');
+            var revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Revenue',
+                        data: revenues,
+                        backgroundColor: 'rgba(60,141,188,0.2)',
+                        borderColor: 'rgba(60,141,188,1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                tooltipFormat: 'll',
+                                displayFormats: {
+                                    day: 'MMM D'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Revenue'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Revenue: $' + context.parsed.y;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching revenue data:', error);
+        }
+    });
+});
+</script>
 @endsection

@@ -10,12 +10,12 @@ class LocationController extends Controller
 
 
 
-        public function showLocationForm($spot_id)
+    public function showLocationForm($spot_id)
     {
         $user = auth()->user(); 
         $spot = ParkingSpot::where('spot_id', $spot_id)
                            ->first();
-        return view('createspot.description', compact('spot')); // Pass the spot to the view
+        return view('createspot.description', compact('spot')); 
     }
     
     public function store(Request $request, $spot_id)

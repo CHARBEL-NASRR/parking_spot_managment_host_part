@@ -73,7 +73,7 @@ body {
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    color: #212529;
+    color: #0bc2a2;
     text-align: left;
     background-color: #fff
 }
@@ -173,13 +173,13 @@ sup {
 }
 
 a {
-    color: #007bff;
+    color: #0bc2a2;
     text-decoration: none;
     background-color: transparent
 }
 
 a:hover {
-    color: #0056b3;
+    color: #0bc2a2;
     text-decoration: none
 }
 
@@ -551,7 +551,7 @@ kbd {
     padding: .2rem .4rem;
     font-size: 87.5%;
     color: #fff;
-    background-color: #212529;
+    background-color: #0bc2a2;
     border-radius: .2rem;
     box-shadow: inset 0 -.1rem 0 rgba(0, 0, 0, .25)
 }
@@ -2866,7 +2866,7 @@ textarea.form-control.is-invalid {
 .btn {
     display: inline-block;
     font-weight: 400;
-    color: #212529;
+    color: #0bc2a2;
     text-align: center;
     vertical-align: middle;
     -webkit-user-select: none;
@@ -2921,22 +2921,22 @@ fieldset:disabled a.btn {
 
 .btn-primary {
     color: #fff;
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: #0bc2a2;
+    border-color: #0bc2a2;
     box-shadow: none
 }
 
 .btn-primary:hover {
     color: #fff;
-    background-color: #0069d9;
-    border-color: #0062cc
+    background-color: #0bc2a2;
+    border-color: #0bc2a2
 }
 
 .btn-primary.focus,
 .btn-primary:focus {
     color: #fff;
-    background-color: #0069d9;
-    border-color: #0062cc;
+    background-color: #0bc2a2;
+    border-color: #0bc2a2;
     box-shadow: 0 0 0 0 rgba(38, 143, 255, .5)
 }
 
@@ -3664,7 +3664,7 @@ input[type=submit].btn-block {
     padding: .5rem 0;
     margin: .125rem 0 0;
     font-size: 1rem;
-    color: #212529;
+    color: #0bc2a2;
     text-align: left;
     list-style: none;
     background-color: #fff;
@@ -3839,7 +3839,7 @@ input[type=submit].btn-block {
     padding: .25rem 1rem;
     clear: both;
     font-weight: 400;
-    color: #212529;
+    color: #0bc2a2;
     text-align: inherit;
     white-space: nowrap;
     background-color: transparent;
@@ -4788,7 +4788,7 @@ input[type=submit].btn-block {
 .nav-pills .nav-link.active,
 .nav-pills .show>.nav-link {
     color: #fff;
-    background-color: #007bff
+    background-color: #0bc2a2
 }
 
 .nav-fill .nav-item,
@@ -7474,7 +7474,7 @@ button.bg-success:hover {
 }
 
 .bg-info {
-    background-color: #17a2b8 !important
+    background-color: #0bc2a2 !important
 }
 
 a.bg-info:focus,
@@ -7485,7 +7485,7 @@ button.bg-info:hover {
 }
 
 .bg-warning {
-    background-color: #ffc107 !important
+    background-color: #0bc2a2 !important
 }
 
 a.bg-warning:focus,
@@ -17183,11 +17183,11 @@ body.text-sm .control-sidebar {
 }
 
 .nav-pills .nav-link {
-    color: #6c757d
+    color: #0bc2a2
 }
 
 .nav-pills .nav-link:not(.active):hover {
-    color: #007bff
+    color: #0bc2a2
 }
 
 .nav-pills .nav-item.dropdown.show .nav-link:hover {
@@ -28422,7 +28422,7 @@ body.text-sm .input-group-text {
 }
 
 .card-primary.card-outline {
-    border-top: 3px solid #007bff
+    border-top: 3px solid #0bc2a2
 }
 
 .card-primary.card-outline-tabs>.card-header a:hover {
@@ -47942,7 +47942,7 @@ blockquote.quote-gray-dark h6 {
 }
 
 .bg-success {
-    background-color: #28a745 !important
+    background-color: #0bc2a2 !important
 }
 
 .bg-success,
@@ -47965,7 +47965,7 @@ blockquote.quote-gray-dark h6 {
 }
 
 .bg-info {
-    background-color: #17a2b8 !important
+    background-color: #0bc2a2 !important
 }
 
 .bg-info,
@@ -47988,7 +47988,7 @@ blockquote.quote-gray-dark h6 {
 }
 
 .bg-warning {
-    background-color: #ffc107 !important
+    background-color: #0bc2a2 !important
 }
 
 .bg-warning,
@@ -48011,7 +48011,7 @@ blockquote.quote-gray-dark h6 {
 }
 
 .bg-danger {
-    background-color: #dc3545 !important
+    background-color: #0bc2a2 !important
 }
 
 .bg-danger,
@@ -48582,7 +48582,7 @@ blockquote.quote-gray-dark h6 {
 
     .table td.bg-success,
     .table th.bg-success {
-        background-color: #28a745 !important
+        background-color: #0bc2a2 !important
     }
 
     .table td.bg-success,
@@ -49377,7 +49377,7 @@ blockquote.quote-gray-dark h6 {
 }
 
 .bg-gradient-primary {
-    background: #007bff linear-gradient(180deg, #268fff, #007bff) repeat-x !important;
+    background: #0bc2a2 !important;
     color: #fff
 }
 
@@ -51307,7 +51307,7 @@ a.text-muted:hover {
 }
 
 .accent-maroon [class*=sidebar-light-] .sidebar a:not(.dropdown-item):not(.btn-app):not(.nav-link):not(.brand-link):hover {
-    color: #212529
+    color: #s
 }
 
 .dark-mode.accent-maroon .page-item .page-link:focus,
@@ -52355,7 +52355,7 @@ a.text-muted:hover {
 }
 
 .dark-mode.bg-success {
-    background-color: #00bc8c !important
+    background-color: #0bc2a2 !important
 }
 
 .dark-mode.bg-success,

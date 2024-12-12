@@ -9,6 +9,7 @@ use App\Models\Wallet;
 use App\Models\ParkingSpot;
 use App\Models\HostDetail;
 use Illuminate\Support\Facades\Log;
+use App\Models\Transaction;
 
 class BookingController extends Controller
 {
@@ -32,7 +33,7 @@ class BookingController extends Controller
         Log::info('Spot IDs for host_id ' . $hostId . ': ' . $spotIds->implode(', '));
 
         $bookings = Booking::whereIn('spot_id', $spotIds)
-            ->where('status', '0')
+            ->where('status', 'pending')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -53,8 +54,8 @@ class BookingController extends Controller
 
 
 
-    public function updateBookingStatus(Request $request, $id)
-    {
+public function updateBookingStatus(Request $request, $id)
+{
     $request->validate([
         'status' => 'required|string|in:accepted,rejected',
     ]);
@@ -95,8 +96,24 @@ class BookingController extends Controller
             $guestWallet->save();
             $hostWallet->save();
 
-            $booking->status = 'accepted';
+            $booking->status = 'upcomming';
             $booking->save();
+
+
+   
+            // Create a transaction record
+            Transaction::create([
+                'sender_wallet_id' => $guestWallet->wallet_id,
+                'receiver_wallet_id' => $hostWallet->wallet_id,
+                'booking_id' => $booking->booking_id,
+                'transaction_type' => 'upcoming',
+                'deducted_amount' => $totalPrice,
+                'received_amount' => $totalPrice,
+                'commission_amount' => 0,
+                'created_at' => now(),
+                'ticket_id' => null,
+            ]);
+
             return redirect()->back()->with('success', 'Booking accepted and payment processed.');
         }
     } elseif ($request->status == 'rejected') {
@@ -107,4 +124,6 @@ class BookingController extends Controller
 
     return redirect()->back()->with('error', 'Invalid status.');
 }
+
+
 }

@@ -127,14 +127,14 @@
               </p>
             </a>
           </li>
-          <li class="nav-item">
-            <a  href="{{route('spots.show')}}"class="nav-link">
-              <i class="nav-icon fas fa-user"></i>
-              <p>
-               Listings
-              </p>
-            </a>
-          </li>
+         <li class="nav-item">
+    <a href="{{ route('spots.show') }}" class="nav-link">
+        <i class="nav-icon fas fa-car"></i>
+        <p>
+            Listings
+        </p>
+    </a>
+</li>
 
           <li class="nav-item">
             <a  href="{{route('profile.show')}}"class="nav-link">
@@ -144,10 +144,46 @@
               </p>
             </a>
           </li>
+
+          <li class="nav-item">
+            <a  href="{{route('messages.index')}}"class="nav-link">
+           <i class="nav-icon fas fa-comments"></i>
+              <p>
+               Chats
+              </p>
+            </a>
+          </li>
+
+         <li class="nav-item">
+    <a href="{{ route('upcoming.bookings.view') }}" class="nav-link">
+        <i class="nav-icon fas fa-book"></i>
+        <p>
+            Upcoming Bookings
+        </p>
+    </a>
+
+
+
+</li>
+
+
+<li class="nav-item mt-auto">
+    <a href="{{ route('logout') }}" class="nav-link"
+       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <i class="nav-icon fas fa-sign-out-alt"></i>
+        <p>
+            Logout
+        </p>
+    </a>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+</li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
     </div>
+    
     <!-- /.sidebar -->
   </aside>
 
