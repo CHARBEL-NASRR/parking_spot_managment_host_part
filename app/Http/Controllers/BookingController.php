@@ -100,6 +100,7 @@ public function updateBookingStatus(Request $request, $id)
             $booking->save();
 
 
+            
    
             // Create a transaction record
             Transaction::create([

@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
   <title>Set Availability</title>
   <link rel="stylesheet" href="{{ asset('css/signup.css') }}">
   <style>
@@ -11,6 +14,12 @@
       flex-direction: column;
       gap: 10px;
       align-items: center;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
     }
 
     .availability-container {
@@ -28,16 +37,28 @@
       margin-bottom: 20px;
     }
 
-    .logo {
-      position: absolute; /* Position the logo absolutely */
-      top: 40px; /* Adjust as needed */
-      left: 40px; /* Adjust as needed */
-    }
+    header {
+        padding: 30px 30px 0px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+      }
 
-    .logo img {
-      width: 100px; /* Increased logo size */
-      height: auto; /* Maintain aspect ratio */
-    }
+
+      header img {
+        width: 120px; /* Increased logo size */
+        height: auto; /* Maintain aspect ratio */
+        margin-left: 70px;
+      }
+
+      .logo-text {
+        color: #16a57f;
+        font-family: roboto;
+        font-size: 30px;
+        margin-bottom: 0px;
+
+      }
 
     .form-group label {
       font-weight: bold;
@@ -100,6 +121,27 @@
       margin-bottom: 20px; /* Add some space below */
       color: #333; /* Optional: change text color */
     }
+    .bottom {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        padding: 0px 15px 20px 15px;
+      }
+      .btn-submit {
+        align-self: flex-end;
+        background-color: #18b98d;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        margin-top: 20px;
+      }
+
+      .btn-submit:hover {
+        background-color: #16a57f;
+      }
   </style>
   <script>
     function addAvailabilityField() {
@@ -122,19 +164,21 @@
       `;
       container.appendChild(newField);
     }
+
   </script>
 </head>
 <body>
-  <div class="logo">
-    <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
-  </div>
+<header>
+      <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
+      <h1 class="logo-text">Chekka</h1>
+    </header>
   <div class="availability-container">
     <h1>Set Availability</h1>
     <p class="subtitle">
       Please specify the availability for the parking spot.
     </p>
 
-    <form method="POST" action="{{ route('availability.save',  $spot->spot_id) }}">
+    <form id="availabilityForm" method="POST" action="{{ route('availability.save',  $spot->spot_id) }}">
         @csrf
         <input type="hidden" name="spot_id" value="{{ $spot->spot_id }}">
 
@@ -155,10 +199,13 @@
         </div>
       </div>
       <div class="button-group">
-        <button type="button" class="add-button" onclick="addAvailabilityField()">Add Another Day</button>
-        <button type="submit" class="btn">Submit</button>
+        <button type="button" class="btn" onclick="addAvailabilityField()">Add Another Day</button>
       </div>
     </form>
   </div>
+  <div class="bottom">
+        <button type="button" class="btn-submit back" onclick="history.back()">Back</button>
+        <button type="submit" class="btn-submit next" form="availabilityForm">Next</button>
+      </div>
 </body>
 </html>

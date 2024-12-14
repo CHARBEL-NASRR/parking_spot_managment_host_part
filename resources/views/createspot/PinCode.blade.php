@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <title>Enter PIN</title>
     <style>
       * {
@@ -15,10 +18,18 @@
       body {
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f8f8;
+        gap: 100px;
+        height: 97vh;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        background-color: #f8f8f8;
       }
 
       .container {
@@ -92,21 +103,27 @@
       }
 
       header {
-        padding: 50px;
+        padding: 30px 30px 0px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
       }
 
-      header {
-        position: absolute;
-        top: 40px;
-        left: 40px;
-      }
 
       header img {
-        width: 120px;
-        height: auto;
+        width: 120px; /* Increased logo size */
+        height: auto; /* Maintain aspect ratio */
         margin-left: 70px;
       }
 
+      .logo-text {
+        color: #16a57f;
+        font-family: roboto;
+        font-size: 30px;
+        margin-bottom: 0px;
+
+      }
 
       .btn-submit {
         align-self: flex-end;
@@ -128,16 +145,17 @@
         display: flex;
         width: 100%;
         justify-content: space-between;
-        padding: 50px;
+        padding: 160px 15px 0px 15px;
       }
     </style>
   </head>
   <body>
-    <header>
+  <header>
       <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
+      <h1 class="logo-text">Chekka</h1>
     </header>
-    <form method="POST" action="{{ route('pin.submit') }}">
-      @csrf
+    <form id="pinForm" action="{{ route('pin.submit') }}" method="POST">
+    @csrf
       <input type="hidden" name="spot_id" value="{{ $spot->spot_id }}"> <!-- Hidden spot_id -->
       <div class="container">
         <h1>Please enter your 4-digit PIN</h1>
@@ -146,10 +164,20 @@
           <input type="password" name="pin" class="pin-input" placeholder="* * * *" maxlength="4" required pattern="\d{4}" />
         </div>
       </div>
+      
       <div class="bottom">
-        <button type="button" class="btn-submit back">Back</button>
-        <button type="submit" class="btn-submit next">Next</button>
+      <button 
+          type="button" 
+          class="btn-submit" 
+          onclick="window.location.href='{{ route('amenities.show', ['spot_id' => $spot->spot_id]) }}'">
+          Back
+      </button>
+
+
+      
+        <button type="submit" class="btn-submit next" form="pinForm">Next</button>
       </div>
+
     </form>
   </body>
 </html>

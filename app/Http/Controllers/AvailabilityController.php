@@ -24,7 +24,7 @@ class AvailabilityController extends Controller
             'start_time_availability.*' => 'required|date_format:H:i',
             'end_time_availability.*' => 'required|date_format:H:i|after:start_time_availability.*',
         ]);
-
+    
         foreach ($request->day as $index => $day) {
             $dayMapping = [
                 'Monday' => 1,
@@ -36,20 +36,34 @@ class AvailabilityController extends Controller
                 'Sunday' => 7,
             ];
             $dayNumeric = $dayMapping[$day] ?? null;
-
+    
             if ($dayNumeric !== null) {
                 $startTime = date('H:i:s', strtotime($request->start_time_availability[$index]));
                 $endTime = date('H:i:s', strtotime($request->end_time_availability[$index]));
-
-                Availability::create([
-                    'spot_id' => $request->spot_id,
-                    'day' => $dayNumeric,
-                    'start_time' => $startTime,
-                    'end_time' => $endTime,
-                ]);
+    
+                // Check if the availability already exists for the spot and day
+                $availability = Availability::where('spot_id', $request->spot_id)->first();
+    
+                if ($availability) {
+                    // Update if the availability already exists
+                    $availability->update([
+                        'day' => $dayNumeric,
+                        'start_time' => $startTime,
+                        'end_time' => $endTime,
+                    ]);
+                } else {
+                    // Create new availability if it doesn't exist
+                    Availability::create([
+                        'spot_id' => $request->spot_id,
+                        'day' => $dayNumeric,
+                        'start_time' => $startTime,
+                        'end_time' => $endTime,
+                    ]);
+                }
             }
         }
-
+    
+        // Update the spot status
         $spot = ParkingSpot::where('spot_id', $request->spot_id)->firstOrFail();
         $spot->update([
             'status' => '0',
@@ -57,4 +71,5 @@ class AvailabilityController extends Controller
         
         return redirect()->route('price.form', ['spot_id' => $spot->spot_id]);
     }
+    
 }

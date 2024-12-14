@@ -29,7 +29,6 @@
         text-align: center;
       }
 
-
       .logo {
         max-width: 60px;
         margin-bottom: 20px;
@@ -78,6 +77,7 @@
       .btn-submit:hover {
         background-color: #16a57f;
       }
+
       header {
         padding: 30px;
         display: flex;
@@ -91,27 +91,27 @@
         height: auto; /* Maintain aspect ratio */
         margin-left: 100px;
       }
+
       .logo-text {
         color: #16a57f;
         font-family: roboto;
         font-size: 30px;
         margin-top: 10px;
-
       }
     </style>
   </head>
   <body>
-  <header>
+    <header>
       <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
       <h1 class="logo-text">Chekka</h1>
     </header>
     <div class="container">
-    <h1>Upload Verification Documents</h1>
-    <p class="subtitle">
-      Please upload the spot verification documents.
-    </p>
+      <h1>Upload Verification Documents</h1>
+      <p class="subtitle">
+        Please upload the spot verification documents.
+      </p>
 
-    <form action="{{ route('upload_docs.save') }}" method="POST" enctype="multipart/form-data">
+      <form action="{{ route('upload-docs.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
           <label for="verification-documents">Verification Documents*</label>
@@ -124,8 +124,11 @@
           />
         </div>
 
-      <button type="submit" class="btn-submit">Submit</button>
-    </form>
+        <!-- Hidden input to pass spot_id -->
+        <input type="hidden" name="spot_id" value="{{ $spot_id }}">
+
+        <button type="submit" class="btn-submit">Submit</button>
+      </form>
     </div>
   </body>
 </html>

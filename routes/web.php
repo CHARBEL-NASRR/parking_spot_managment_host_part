@@ -70,6 +70,10 @@ Route::prefix('host')->group(function () {
 
         Route::get('/upload_docs', [VerificationController::class, 'showuploadverificationpage'])->name('upload_docs.form');
         Route::post('/upload_docs', [VerificationController::class, 'uploadVeriDocsToGoogleDrive2'])->name('upload_docs.save');
+        Route::get('/upload-docs', [VerificationController::class, 'showUploadForm'])->name('upload_docs.updateform');
+        Route::post('/upload-docs', [VerificationController::class, 'updateVeriDocsInGoogleDrive'])->name('upload-docs.update');
+        
+        
         Route::get('/amenities', [AmennitiesController::class, 'showAmenitiesForm'])->name('amenities.show');
         Route::post('/amenities/save', [AmennitiesController::class, 'submitAmenities'])->name('amenities.save');
         Route::get('/pin', [PinController::class, 'showPinForm'])->name('pin.form');

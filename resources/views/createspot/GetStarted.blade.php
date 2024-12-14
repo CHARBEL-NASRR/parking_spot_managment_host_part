@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <title>Getting Started</title>
     <style>
       body {
@@ -75,28 +79,35 @@
         background-color: #16a57f;
       }
       header {
-        padding: 90px;
+        padding: 30px;
+        display: flex;
+        align-items: center;
       }
-      header {
-        top: 40px; /* Adjust as needed */
-        left: 40px; /* Adjust as needed */
-      }
+
 
       header img {
         width: 120px; /* Increased logo size */
         height: auto; /* Maintain aspect ratio */
         margin-left: 70px;
       }
+
+      .logo-text {
+        color: #16a57f;
+        font-family: roboto;
+        font-size: 30px;
+
+      }
     </style>
   </head>
   <body>
     <header>
       <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
+      <h1 class="logo-text">Chekka</h1>
     </header>
     <div class="container">
       <div class="content">
         <h1>It's easy to get started on our Website</h1>
-        <a href="{{ route('upload_docs.form') }}" class="btn-get-started">Get Started</a>
+        <a href="{{ route('upload_docs.form') }}" class="btn-get-started">Get Started</a> 
       </div>
       <div class="steps">
         <div class="step">

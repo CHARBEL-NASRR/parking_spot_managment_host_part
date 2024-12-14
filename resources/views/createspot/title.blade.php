@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <title>Enter PIN</title>
     <style>
       * {
@@ -15,10 +18,18 @@
       body {
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f8f8;
+        gap: 100px;
+        height: 97vh;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        background-color: #f8f8f8;
       }
 
       .container {
@@ -29,7 +40,6 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         width: 90%;
         max-width: 600px;
-        margin-bottom: 20px; /* Adjust space for the buttons outside */
       }
 
       .logo {
@@ -67,14 +77,6 @@
         border-radius: 8px;
       }
 
-      .pin-counter {
-        position: absolute;
-        right: 15px;
-        bottom: 12px;
-        font-size: 12px;
-        color: #666;
-      }
-
       .actions {
         display: flex;
         justify-content: space-between;
@@ -101,22 +103,28 @@
       }
 
       header {
-        padding: 50px;
+        padding: 30px 30px 0px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
       }
 
-      header {
-        position: absolute;
-        top: 40px;
-        left: 40px;
-      }
 
       header img {
-        width: 120px;
-        height: auto;
+        width: 120px; /* Increased logo size */
+        height: auto; /* Maintain aspect ratio */
         margin-left: 70px;
       }
 
-      /* Updated button styles similar to amenities page */
+      .logo-text {
+        color: #16a57f;
+        font-family: roboto;
+        font-size: 30px;
+        margin-bottom: 0px;
+
+      }
+
       .btn-submit {
         align-self: flex-end;
         background-color: #18b98d;
@@ -125,7 +133,8 @@
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 1rem;
+        font-size: 1.2rem;
+        margin-top: 20px;
       }
 
       .btn-submit:hover {
@@ -136,40 +145,29 @@
         display: flex;
         width: 100%;
         justify-content: space-between;
-        padding: 0 50px 50px; /* Keep padding only for bottom */
-      }
-
-      .bottom button {
-        width: 48%; /* Adjust width for both buttons */
+        padding: 160px 15px 0px 15px;
       }
     </style>
   </head>
   <body>
-    <header>
+  <header>
       <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
+      <h1 class="logo-text">Chekka</h1>
     </header>
-
-    <div class="container">
+    <form id="titleForm" method="POST" action="{{ route('title.save') }}">
+    @csrf
+      <input type="hidden" name="spot_id" value="{{ $spot->spot_id }}"> <!-- Hidden spot_id -->
+      <div class="container">
       <h1>Now, let's give your spot a title</h1>
       <p>Short titles work best. Have fun with it—you can always change it later</p>
-      
-      <!-- Start of the form -->
-      <form id="titleForm" method="POST" action="{{ route('title.save') }}">
-        @csrf
-        <input type="hidden" name="spot_id" value="{{ $spot->spot_id }}">
-
-        <div class="pin-input">
-          <input type="text" name="title" placeholder="Enter your title" maxlength="4" required />
+      <div class="pin-input">
+          <input type="text" name="title" placeholder="Enter your title" maxlength="20" required />
         </div>
-      </form>
-      <!-- End of the form -->
-    </div>
-
-    <!-- Bottom buttons outside of the container -->
-    <div class="bottom">
-      <button type="button" class="btn-submit" onclick="history.back()">Back</button>
-      <button type="submit" class="btn-submit" form="titleForm">Next</button>
-    </div>
-
+      </div>
+      <div class="bottom">
+        <button type="button" class="btn-submit" onclick="history.back()">Back</button>
+        <button type="submit" class="btn-submit next">Next</button>
+      </div>
+    </form>
   </body>
 </html>

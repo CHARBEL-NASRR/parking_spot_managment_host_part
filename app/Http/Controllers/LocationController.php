@@ -27,12 +27,25 @@ class LocationController extends Controller
         ]);
 
       
-        spotLocation::create([
-            'spot_id' =>  $request->spot_id,
-            'address' =>  $validated['address'],
-            'city' => $validated['city'],
-            'district' => $validated['district'],
-        ]);
+        $spotLocation = spotLocation::where('spot_id', $request->spot_id)->first();
+
+        if ($spotLocation) {
+            // If spot_id exists, update the record
+            $spotLocation->update([
+                'address' => $validated['address'],
+                'city' => $validated['city'],
+                'district' => $validated['district'],
+            ]);
+        } else {
+            // If spot_id does not exist, create a new record
+            spotLocation::create([
+                'spot_id' => $request->spot_id,
+                'address' => $validated['address'],
+                'city' => $validated['city'],
+                'district' => $validated['district'],
+            ]);
+        }
+        
 
         // Update the ParkingSpot table
         $spot = ParkingSpot::where('spot_id', $request->spot_id)->first();

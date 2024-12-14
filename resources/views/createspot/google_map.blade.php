@@ -14,33 +14,20 @@
             min-height: 100vh;
         }
 
-        header {
-            color: #000000;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        header img {
-            height: 60px;
-        }
 
         h1 {
             font-size: 30px;
             margin-bottom: 10px;
             color: #333;
             text-align: center;
-            position: absolute;
             top: 20px;
             left: 50%;
-            transform: translateX(-50%);
         }
 
         #search-bar {
             width: 90%;
             max-width: 800px;
-            margin: 70px auto;
+            margin: auto;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
@@ -58,17 +45,17 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        footer {
-            padding: 10px 20px;
+        footer form {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            width: 100%;
         }
 
         footer button {
             padding: 10px 20px;
             font-size: 16px;
             color: #ffffff;
-            background-color: #000000;
+            background-color: #18b98d;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -81,24 +68,35 @@
         }
 
         header {
-            position: absolute;
-            top: 40px;
-            left: 40px;
-        }
+        padding: 30px 30px 0px 30px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
 
-        header img {
-            width: 120px;
-            height: auto;
-            margin-left: 70px;
-        }
+
+      header img {
+        width: 120px; /* Increased logo size */
+        height: auto; /* Maintain aspect ratio */
+        margin-left: 70px;
+      }
+
+      .logo-text {
+        color: #16a57f;
+        font-family: roboto;
+        font-size: 30px;
+        margin-bottom: 0px;
+        margin-top: 0px;
+
+      }
+
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="logo">
-            <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
-        </div>
+    <header>
+      <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
+      <h1 class="logo-text">Chekka</h1>
     </header>
 
     <h1>Is the Pin in the Right Spot?</h1>
@@ -120,7 +118,9 @@
             <input type="hidden" id="address" name="address">
             <input type="hidden" id="district" name="district">
 
-            <button type="submit">Next</button>
+            <button type="button" class="btn-submit back" onclick="history.back()">Back</button>
+
+            <button class="next-button" type="submit">Next</button>
         </form>
     </footer>
 

@@ -6,15 +6,17 @@
   <title>Upload Photos</title>
   <link rel="stylesheet" href="{{ asset('css/createspot/images_spot.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <div class="logo">
-        <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
-      </div>
-    </header>
 
+<header>
+      <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
+      <h1 class="logo-text">Chekka</h1>
+    </header>
+    <div class="container">
     <div class="content">
       <h1 class="title">Add some photos of your house</h1>
       <p class="subtitle">
@@ -92,12 +94,12 @@
         </div>
       </div>
     </div>
+    </div>
+    <div class="bottom">
+        <button type="button" class="btn-back btn" id="backButton" onclick="history.back()">Back</button>
+        <button type="submit" class="btn-next btn" id="nextButton">Next</button>
+</div>
 
-    <footer>
-        <button type="button" class="btn back" id="backButton">Back</button>
-        <button type="submit" class="btn next" id="nextButton">Next</button>
-    </footer>
-  </div>
   <script>
 document.addEventListener('DOMContentLoaded', function () {
     const uploadBoxes = Array.from(document.querySelectorAll('.upload-box'));
@@ -155,10 +157,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Back button event
+    document.addEventListener('DOMContentLoaded', function () {
+    const backButton = document.getElementById('backButton');
+
+    const descriptionRoute = '{{ route('description.form', ['spot_id' => $spot_id]) }}';  // Assuming $spot_id is available in the Blade view
     backButton.addEventListener('click', function () {
-        window.history.back();
+        window.location.href = descriptionRoute;
     });
+});
+
 
     checkNextButtonStatus();
 });

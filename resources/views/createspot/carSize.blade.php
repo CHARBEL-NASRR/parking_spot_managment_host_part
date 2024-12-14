@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <title>Place Selection</title>
     <style>
       * {
@@ -15,7 +18,7 @@
       body {
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
         background-color: #f8f8f8;
         min-height: 100vh;
@@ -68,7 +71,7 @@
 
       .option.selected {
         border-color: black;
-        background-color: #fafafa;
+        background-color: #dff0d8;
       }
       .option img {
         width: 100%;
@@ -113,40 +116,38 @@
         background-color: #f0f0f0;
         color: #555;
       }
+
+
       header {
-        padding: 50px;
+        padding: 30px 30px 0px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
       }
-      header {
-        position: absolute;
-        top: 40px;
-        left: 40px;
-      }
+
 
       header img {
-        width: 120px;
-        height: auto;
+        width: 120px; /* Increased logo size */
+        height: auto; /* Maintain aspect ratio */
         margin-left: 70px;
       }
-      .logo {
-        position: absolute; /* Position the logo absolutely */
-        top: 40px; /* Adjust as needed */
-        left: 40px; /* Adjust as needed */
-      }
 
-      .logo img {
-        width: 100px; /* Increased logo size */
-        height: auto; /* Maintain aspect ratio */
-      }
+      .logo-text {
+        color: #16a57f;
+        font-family: roboto;
+        font-size: 30px;
+        margin-bottom: 0px;
 
+      }
       .btn-submit {
-        align-self: flex-end;
         background-color: #18b98d;
         color: #fff;
         padding: 10px 20px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 1rem;
+        font-size: 19px;
       }
 
       .btn-submit:hover {
@@ -156,22 +157,27 @@
         display: flex;
         width: 100%;
         justify-content: space-between;
-        padding: 50px;
+        padding: 160px 15px 20px 15px;
+      }
+      .type{
+        font-size: 30px;
       }
     </style>
   </head>
   <body>
-    <header>
+  <header>
       <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
+      <h1 class="logo-text">Chekka</h1>
     </header>
-    <h1>Vehicle Type Selection</h1>
+    
     <div class="container">
-      <form action="{{ route('carSize.save', ['spot_id' => $spot->spot_id]) }}" method="POST" enctype="multipart/form-data">
+      <form id="carSizeForm" action="{{ route('carSize.save', ['spot_id' => $spot->spot_id]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="spot_id" value="{{ $spot->spot_id }}">
         <input type="hidden" name="vehicle_type" id="vehicle_type" value="4wheeler"> <!-- Default to 4wheeler -->
 
         <main>
+        <h2 class="type">Vehicle Type Selection</h2>
           <h2>Select the largest vehicle type your parking can handle:</h2>
           <div class="options-grid">
             <button type="button" class="option" data-vehicle="2wheeler">
@@ -192,13 +198,13 @@
             </button>
           </div>
         </main>
-
-        <div class="bottom">
-          <button type="submit" class="btn-submit">Back</button>
-          <button type="submit" class="btn-submit">Next</button>
-        </div>
       </form>
     </div>
+
+        <div class="bottom">
+          <button type="submit" class="btn-submit" onclick="history.back()">Back</button>
+          <button type="submit" class="btn-submit" form="carSizeForm">Next</button>
+        </div>
 
     <script>
       // JavaScript to handle the option selection and update the hidden input

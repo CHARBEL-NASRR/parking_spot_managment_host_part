@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <title>Enter PIN</title>
     <style>
       * {
@@ -15,10 +18,28 @@
       body {
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f8f8;
+        gap: 100px;
+        height: 97vh;
+      }
+      textarea {
+        font-size: 18px;
+        text-align: left;
+        width: 100%;
+        max-width: 500px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        resize: both;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        background-color: #f8f8f8;
       }
 
       .container {
@@ -28,7 +49,7 @@
         padding: 40px 20px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         width: 90%;
-        max-width: 700px;
+        max-width: 600px;
       }
 
       .logo {
@@ -56,23 +77,14 @@
         position: relative;
       }
 
-      textarea {
+      input {
         font-size: 18px;
-        text-align: left;
+        text-align: center;
         width: 100%;
-        max-width: 500px;
+        max-width: 300px;
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 8px;
-        resize: both;
-      }
-
-      .pin-counter {
-        position: absolute;
-        right: 15px;
-        bottom: 12px;
-        font-size: 12px;
-        color: #666;
       }
 
       .actions {
@@ -101,19 +113,26 @@
       }
 
       header {
-        padding: 50px;
+        padding: 30px 30px 0px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
       }
 
-      header {
-        position: absolute;
-        top: 40px;
-        left: 40px;
-      }
 
       header img {
-        width: 120px;
-        height: auto;
+        width: 120px; /* Increased logo size */
+        height: auto; /* Maintain aspect ratio */
         margin-left: 70px;
+      }
+
+      .logo-text {
+        color: #16a57f;
+        font-family: roboto;
+        font-size: 30px;
+        margin-bottom: 0px;
+
       }
 
       .btn-submit {
@@ -124,7 +143,8 @@
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 1rem;
+        font-size: 1.2rem;
+        margin-top: 20px;
       }
 
       .btn-submit:hover {
@@ -135,22 +155,20 @@
         display: flex;
         width: 100%;
         justify-content: space-between;
-        padding: 50px;
+        padding: 160px 15px 0px 15px;
       }
     </style>
   </head>
   <body>
-    <header>
+  <header>
       <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
+      <h1 class="logo-text">Chekka</h1>
     </header>
-
-    <!-- Start of the form -->
     <form method="POST" action="{{ route('description.save', $spot->spot_id) }}">
-      @csrf
-      <input type="hidden" name="spot_id" value="{{ $spot->spot_id }}">
-
+    @csrf
+      <input type="hidden" name="spot_id" value="{{ $spot->spot_id }}"> <!-- Hidden spot_id -->
       <div class="container">
-        <h1>Now, let's give your spot a description</h1>
+      <h1>Now, let's give your spot a description</h1>
         <p>
           Provide a detailed description. Remember, you can always change it later
           in settings.
@@ -159,13 +177,10 @@
           <textarea name="description" id="description" placeholder="Enter your description"></textarea>
         </div>
       </div>
-
-      <!-- Bottom buttons -->
       <div class="bottom">
-        <button type="button" class="btn-submit" onclick="history.back()">Back</button>
-        <button type="submit" class="btn-submit">Next</button>
+        <button type="button" class="btn-submit back" onclick="history.back()">Back</button>     
+        <button type="submit" class="btn-submit next">Next</button>
       </div>
     </form>
-    <!-- End of the form -->
   </body>
 </html>
