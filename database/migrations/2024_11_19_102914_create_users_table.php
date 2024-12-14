@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('Users', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->id('user_id');  // Custom primary key
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('phone_number');
+            $table->string('phone_number', 15);  // Correct length
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('status')->nullable();
+            $table->enum('status', ['pending', 'active', 'blocked'])->default('pending');  // Correct ENUM type
             $table->string('google_id')->nullable();
             $table->string('validate_token')->nullable();
-            $table->boolean('is_valid')->default(0);
+            $table->boolean('is_valid')->default(false);
             $table->timestamp('expired_date')->nullable();
             $table->timestamps();
         });

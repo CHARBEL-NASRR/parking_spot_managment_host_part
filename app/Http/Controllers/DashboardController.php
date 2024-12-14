@@ -5,117 +5,159 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\User;
+use App\Models\HostDetail;
+use App\Models\ParkingSpot;
 use App\Models\Spot;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-   public function getLastBookings(Request $request)
+    public function getLastBookings(Request $request)
     {
-        $days = $request->input('days', 30); 
-        $startDate = Carbon::now()->subDays($days);
+        try {
+            $days = $request->input('days', 30); // Default to last 30 days if not provided
+            $startDate = Carbon::now()->subDays($days);
+    
+            $userId = auth()->id(); 
+    
+            // Retrieve the host details for the authenticated user
+            $host = HostDetail::where('user_id', $userId)->first();
+    
+            if (!$host) {
+                return response()->json(['error' => 'Host not found'], 404);
+            }
+    
+            // Retrieve bookings associated with the host's parking spots
+            $bookings = Booking::select(
+                    'bookings.booking_id',
+                    'bookings.guest_id',
+                    'bookings.spot_id',
+                    'bookings.start_time',
+                    'bookings.end_time',
+                    'bookings.status',
+                    'bookings.total_price',
+                    'bookings.created_at',
+                    'parking_spots.title as spot_title'
+                )
+                ->join('parking_spots', 'bookings.spot_id', '=', 'parking_spots.spot_id')
+                ->where('parking_spots.host_id', $host->host_id)
+                ->where('bookings.created_at', '>=', $startDate)
+                ->orderBy('bookings.created_at', 'desc')
+                ->get();
+    
+            // Add guest name to each booking
+            $bookings->each(function ($booking) {
+                $guest = User::find($booking->guest_id);
+                $booking->guest_name = $guest ? $guest->name : 'Guest';
+            });
+    
+            return response()->json(['bookings' => $bookings]);
+    
+        } catch (\Exception $e) {
+            \Log::error('Error retrieving last bookings: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+    
+            return response()->json([
+                'error' => 'An unexpected error occurred',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
 
+    public function getRevenueData()
+{
+    try {
         $userId = auth()->id(); 
+        \Log::info('User ID for revenue data: ' . $userId);
 
         $host = HostDetail::where('user_id', $userId)->first();
+        
         if (!$host) {
+            \Log::error('No host found for user ID: ' . $userId);
             return response()->json(['error' => 'Host not found'], 404);
         }
 
-        $bookings = Booking::where('created_at', '>=', $startDate)
-            ->where('host_id', $host->host_id) 
-            ->orderBy('created_at', 'desc')
+        $revenues = Booking::select(
+                'bookings.spot_id', 
+                DB::raw('DATE(bookings.created_at) as date'), 
+                DB::raw('SUM(bookings.total_price) as total')
+            )
+            ->join('parking_spots', 'bookings.spot_id', '=', 'parking_spots.spot_id')
+            ->where('parking_spots.host_id', $host->host_id)
+            ->whereIn('bookings.status', ['accepted'])
+            ->groupBy('date', 'bookings.spot_id')
+            ->orderBy('date', 'asc')
             ->get();
 
-        $bookings->each(function ($booking) {
-            $guest = User::find($booking->guest_id);
-            $spot = Spot::find($booking->spot_id);
-            $booking->guest_name = $guest ? $guest->name : 'Guest';
-            $booking->spot_title = $spot ? $spot->title : 'Spot';
-        });
+        \Log::info('Revenues retrieved: ' . $revenues->count() . ' records');
 
-        return response()->json(['bookings' => $bookings]);
+        return response()->json($revenues);
+
+    } catch (\Exception $e) {
+        \Log::error('Revenue data retrieval error: ' . $e->getMessage());
+        \Log::error($e->getTraceAsString());
+
+        return response()->json([
+            'error' => 'An unexpected error occurred',
+            'message' => $e->getMessage()
+        ], 500);
     }
-
-
-public function getRevenueData()
-{
-    $userId = auth()->id(); 
-
-    $host = HostDetail::where('user_id', $userId)->first();
-    if (!$host) {
-        return response()->json(['error' => 'Host not found'], 404);
-    }
-
-    $revenues = Booking::selectRaw('DATE(created_at) as date, SUM(total_price) as total')
-        ->where('host_id', $host->host_id) 
-        ->whereIn('status', ['accepted'])
-        ->groupBy('date')
-        ->orderBy('date', 'asc')
-        ->get();
-
-    return response()->json($revenues);
 }
 
 
-
-    public function getmonthlyprofit()
+public function getMonthlyIncome()
 {
     $userId = auth()->id(); 
     $host = HostDetail::where('user_id', $userId)->first(); 
-    $monthlyProfits = Booking::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(total_price) as total')
-        ->whereIn('status', ['accepted']) 
-        ->where('host_id', $host->host_id)
-        ->groupBy('month')
-        ->orderBy('month', 'asc')
-        ->get();
+    
+    $monthlyIncome = Booking::join('parking_spots', 'bookings.spot_id', '=', 'parking_spots.spot_id')
+        ->where('parking_spots.host_id', $host->host_id)
+        ->whereIn('bookings.status', ['accepted'])
+        ->whereBetween('bookings.created_at', [now()->startOfMonth(), now()->endOfMonth()])
+        ->sum('bookings.total_price');
 
-    return response()->json($monthlyProfits);
+    return response()->json($monthlyIncome);
 }
 
-
-  public function getdailyprofit()
+public function getDailyIncome()
 {
     $userId = auth()->id(); 
     $host = HostDetail::where('user_id', $userId)->first(); 
-    $dailyProfits = Booking::selectRaw('DATE(created_at) as date, SUM(total_price) as total')
-        ->whereIn('status', ['accepted'])
-        ->where('host_id', $host->host_id)
-        ->groupBy('date')
-        ->orderBy('date', 'asc')
-        ->get();
+    
+    $dailyIncome = Booking::join('parking_spots', 'bookings.spot_id', '=', 'parking_spots.spot_id')
+        ->where('parking_spots.host_id', $host->host_id)
+        ->whereIn('bookings.status', ['accepted'])
+        ->whereDate('bookings.created_at', today())
+        ->sum('bookings.total_price');
 
-    return response()->json($dailyProfits);
+    return response()->json($dailyIncome);
 }
 
-
-  public function getdealcompleted()
+public function getDealsCompleted()
 {
     $userId = auth()->id(); 
     $host = HostDetail::where('user_id', $userId)->first(); 
-    $acceptedBookings = Booking::whereIn('spot_id', $spotIds)
-            ->where('status', 'accepted')
-            ->where('host_id', $host->host_id)
-            ->count();
-   
-    return $acceptedBookings;
+    
+    $dealsCompleted = Booking::join('parking_spots', 'bookings.spot_id', '=', 'parking_spots.spot_id')
+        ->where('parking_spots.host_id', $host->host_id)
+        ->where('bookings.status', 'accepted')
+        ->count();
+
+    return response()->json($dealsCompleted);
 }
 
-
-   public function getoverallrating()
+public function getOverallRating()
 {
     $userId = auth()->id(); 
-    $host = HostDetails::where('user_id', $userId)->first(); 
-    $totalRating = $spots->sum('overall_rating')
-                ->where('host_id', $host->host_id);
+    $host = HostDetail::where('user_id', $userId)->first(); 
+    
+    $spots = ParkingSpot::where('host_id', $host->host_id)->get();
+    $averageRating = $spots->avg('overall_rating');
 
-    $numberOfSpots = $spots->count();
-    $averageRating = $numberOfSpots > 0 ? $totalRating / $numberOfSpots : 0;
-    return $averageRating;
+    return response()->json($averageRating);
 }
-
-
-
 
 
 }

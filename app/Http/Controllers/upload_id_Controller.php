@@ -73,10 +73,10 @@ class upload_id_Controller extends Controller
 
             $Host = new HostDetail();
             $Host->user_id = $user->user_id; // Add user_id
-            $Host->id_card = $uploadedFile->id;
+            $Host->id_card = 'https://drive.google.com/uc?id=' .$uploadedFile->id;
             $Host->save();
 
             session(['host_id' => $Host->host_id]); // Store the host_id in the session
-        return redirect()->route('amenities.show')->with('success', 'Your account has been validated successfully! Please log in.');
+        return redirect()->route('dashboard')->with('success', 'Your account has been validated successfully! Please log in.');
     }
 }

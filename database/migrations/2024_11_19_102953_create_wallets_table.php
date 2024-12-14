@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('Wallets', function (Blueprint $table) {
+        Schema::create('wallets', function (Blueprint $table) {
             $table->id('wallet_id');  // Custom primary key
             $table->unsignedBigInteger('user_id');
             $table->decimal('balance', 10, 2);
-            $table->timestamp('last_updated');
+            $table->timestamp('last_updated')->useCurrent(); // Default to current timestamp
 
-            $table->foreign('user_id')->references('user_id')->on('Users')->onDelete('cascade');
-
+            // Foreign key constraint linking to the Users table
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
         });
     }
 

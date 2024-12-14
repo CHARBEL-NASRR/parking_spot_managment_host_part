@@ -19,7 +19,7 @@
         <button class="icons-btn" id="search-icon">
             <i class="fas fa-search"></i>
         </button>
-        <button class="icons-btn">
+        <button class="icons-btn" id="getstarted-btn">
             <i class="fas fa-plus"></i>
         </button>
     </div>
@@ -60,6 +60,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 
     <script>
+    document.getElementById('getstarted-btn').addEventListener('click', function () {
+        window.location.href = "{{ route('getstarted') }}";  // Adjust the URL to match your route
+        });
     document.addEventListener('DOMContentLoaded', function () {
         const searchIcon = document.getElementById('search-icon');
         const searchBox = document.getElementById('search-box');

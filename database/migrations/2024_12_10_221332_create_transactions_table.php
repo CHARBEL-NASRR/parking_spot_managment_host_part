@@ -11,21 +11,22 @@ class CreateTransactionsTable extends Migration
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->id('transaction_id');
-            $table->unsignedBigInteger('sender_wallet_id')->nullable();
-            $table->unsignedBigInteger('receiver_wallet_id')->nullable();
-            $table->unsignedBigInteger('booking_id')->nullable();
-            $table->string('transaction_type', 50)->nullable();
-            $table->string('deducted_amount', 50)->nullable();
-            $table->string('received_amount', 50)->nullable();
-            $table->string('commission_amount', 50)->nullable();
-            $table->timestamp('created_at')->useCurrent();
-            $table->unsignedBigInteger('ticket_id')->nullable();
+            $table->id('transaction_id'); // Auto-increment primary key
+            $table->unsignedBigInteger('sender_wallet_id'); // Foreign key for sender_wallet_id
+            $table->unsignedBigInteger('receiver_wallet_id'); // Foreign key for receiver_wallet_id
+            $table->unsignedBigInteger('booking_id'); // Foreign key for booking_id
+            $table->enum('transaction_type', ['pending', 'transferred', 'refunded', 'rejected'])->default('pending'); // Enum for transaction type with default value
+            $table->decimal('deducted_amount', 10, 2)->nullable(); // DECIMAL for deducted_amount
+            $table->decimal('received_amount', 10, 2)->nullable(); // DECIMAL for received_amount
+            $table->decimal('commission_amount', 10, 2)->nullable(); // DECIMAL for commission_amount
+            $table->timestamp('created_at')->useCurrent(); // Timestamp for when the transaction is created
+            $table->unsignedBigInteger('ticket_id')->nullable(); // Foreign key for ticket_id (nullable)
 
-            $table->foreign('sender_wallet_id')->references('id')->on('wallets');
-            $table->foreign('receiver_wallet_id')->references('id')->on('wallets');
-            $table->foreign('booking_id')->references('id')->on('bookings');
-            $table->foreign('ticket_id')->references('id')->on('tickets');
+            // Define foreign key constraints to other tables
+            $table->foreign('sender_wallet_id')->references('wallet_id')->on('wallets')->onDelete('cascade');
+            $table->foreign('receiver_wallet_id')->references('wallet_id')->on('wallets')->onDelete('cascade');
+            $table->foreign('booking_id')->references('booking_id')->on('bookings')->onDelete('cascade');
+            $table->foreign('ticket_id')->references('ticket_id')->on('tickets')->onDelete('set null');
         });
     }
 

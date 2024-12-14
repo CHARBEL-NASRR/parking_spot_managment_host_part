@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class HostDetail extends Model
 {
-    protected $table = 'Host_Details';
+    protected $table = 'host_details';
     protected $primaryKey = 'host_id';  // Custom primary key
     public $incrementing = true;
     protected $keyType = 'int';

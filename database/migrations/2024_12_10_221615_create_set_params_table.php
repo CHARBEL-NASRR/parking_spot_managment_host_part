@@ -11,11 +11,11 @@ class CreateSetParamsTable extends Migration
     public function up(): void
     {
         Schema::create('set_param', function (Blueprint $table) {
-            $table->id('condition_id');
-            $table->decimal('threshold_amount', 10, 2);
-            $table->string('schedule', 50);
-            $table->string('commission_rate', 50);
-            $table->timestamp('created_at')->useCurrent();
+            $table->id('condition_id'); // Auto-increment primary key
+            $table->decimal('threshold_amount', 10, 2); // DECIMAL for the threshold amount
+            $table->string('schedule', 50); // VARCHAR for the schedule
+            $table->decimal('commission_rate', 5, 2); // DECIMAL for commission rate with 2 decimal points
+            $table->timestamp('created_at')->useCurrent(); // Timestamp with current time
         });
     }
 

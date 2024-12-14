@@ -16,6 +16,7 @@ class SpotAmenities extends Model
     protected $fillable = [
         'spot_id',
         'is_covered',
+        'is_gated',
         'has_security',
         'has_ev_charging',
         'is_handicap_accessible',
@@ -25,6 +26,7 @@ class SpotAmenities extends Model
 
     protected $casts = [
         'is_covered' => 'boolean',
+        'is_gated' => 'boolean',
         'has_security' => 'boolean',
         'has_ev_charging' => 'boolean',
         'is_handicap_accessible' => 'boolean',

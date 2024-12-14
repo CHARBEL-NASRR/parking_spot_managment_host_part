@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,24 +22,35 @@ class Transaction extends Model
         'ticket_id',
     ];
 
-    
     public $timestamps = false; // Disable timestamps
 
+    /**
+     * Get the wallet associated with the sender.
+     */
     public function senderWallet()
     {
         return $this->belongsTo(Wallet::class, 'sender_wallet_id');
     }
 
+    /**
+     * Get the wallet associated with the receiver.
+     */
     public function receiverWallet()
     {
         return $this->belongsTo(Wallet::class, 'receiver_wallet_id');
     }
 
+    /**
+     * Get the booking associated with the transaction.
+     */
     public function booking()
     {
         return $this->belongsTo(Booking::class, 'booking_id');
     }
 
+    /**
+     * Get the ticket associated with the transaction.
+     */
     public function ticket()
     {
         return $this->belongsTo(Ticket::class, 'ticket_id');

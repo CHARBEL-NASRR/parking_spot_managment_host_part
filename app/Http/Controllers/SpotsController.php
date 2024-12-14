@@ -44,7 +44,5 @@ class SpotsController extends Controller
 
         return view('dashboard.spots', compact('spots'));
     }
-
-
     
 }

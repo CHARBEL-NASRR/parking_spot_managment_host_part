@@ -36,6 +36,7 @@ class RegisterController extends Controller
             'phone_number' => $request->input('phone'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
+            'status' => "Pending",
             'google_id' => null,
             'validate_token' => $this->gen_uuid(), 
             'is_valid' => false,
@@ -46,6 +47,16 @@ class RegisterController extends Controller
 
 
     $user->save();
+    if ($user->user_id) {
+        $userrole = new UserRole([
+            'user_id' => $user->user_id, 
+            'role_id' => 2,           
+        ]);
+    
+        $userrole->save();
+    } else {
+        dd('User ID is not set properly');
+    }
 
 
         $this->sendValidationEmail($user);

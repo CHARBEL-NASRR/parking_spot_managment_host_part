@@ -20,9 +20,17 @@ class Booking extends Model
         'total_price',
     ];
 
-  
+    /**
+     * Get the parking spot associated with the booking.
+     */
     public function spot()
     {
         return $this->belongsTo(Spot::class, 'spot_id');
     }
+
+    // Uncomment this method once the guest table is available
+    // public function guest()
+    // {
+    //     return $this->belongsTo(User::class, 'guest_id', 'user_id');
+    // }
 }

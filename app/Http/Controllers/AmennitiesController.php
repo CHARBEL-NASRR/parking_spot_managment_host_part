@@ -9,86 +9,56 @@ use Illuminate\Support\Facades\Log;
 
 class AmennitiesController extends Controller
 {
-    // Show the amenities form
-    public function showAmenitiesForm()
+    public function showAmenitiesForm(Request $request)
     {
-            $host_id = session('host_id');
-        return view('createspot.amentities');
+        $spot_id = $request->input('spot_id');
+        $spot = ParkingSpot::where('host_id', session('host_id'))
+                            ->where('spot_id', $spot_id)
+                            ->first();
+        return view('createspot.amenities', compact('spot'));
     }
 
-    // Handle form submission
-public function submitAmenities(Request $request)
-{
-    // Validate the incoming request
-    $validated = $request->validate([
-        'is_covered' => 'nullable|in:on',
-        'has_security' => 'nullable|in:on',
-        'has_ev_charging' => 'nullable|in:on',
-        'is_handicap_accessible' => 'nullable|in:on',
-        'has_lighting' => 'nullable|in:on',
-        'has_cctv' => 'nullable|in:on',
-    ]);
+    public function submitAmenities(Request $request)
+    {
+        // Validate the incoming request
+        $validated = $request->validate([
+            'amenities' => 'required|array',
+            'spot_id' => 'required|exists:parking_spots,spot_id', 
+        ]);
 
-    try {
-        // Get the authenticated user
-        $user = auth()->user();
-        if (!$user) {
-            throw new \Exception('User not authenticated');
+        $hostId = session('host_id');
+
+        $spot = ParkingSpot::where('spot_id', $request->spot_id)->first();
+        if (!$spot) {
+            Log::error('ParkingSpot not found for spot_id: ' . $request->spot_id);
+            return redirect()->back()->withErrors(['error' => 'Parking spot not found']);
         }
 
-        // Retrieve the host_id from the host_details table using the user_id
-        $hostDetail = \App\Models\HostDetail::where('user_id', $user->user_id)->first();
-        if (!$hostDetail) {
-            throw new \Exception('Host details not found for user_id: ' . $user->user_id);
-        }
-        $host_id = $hostDetail->host_id;
+        $amenities = [
+            'is_covered' => in_array('Cover', $request->amenities),
+            'has_security' => in_array('Security', $request->amenities),
+            'has_ev_charging' => in_array('EV Charging', $request->amenities),
+            'is_handicap_accessible' => in_array('Handicap', $request->amenities),
+            'has_lighting' => in_array('Light', $request->amenities),
+            'has_cctv' => in_array('CCTV', $request->amenities),
+            'is_gated' => in_array('Gate', $request->amenities),
+        ];
 
-        // Create a new ParkingSpot or retrieve an existing one if spot_id is passed
-        $spot_id = $request->query('spot_id');
-        $spot = null;
-
-        if ($spot_id) {
-            // Find the existing spot by ID
-            $spot = ParkingSpot::where('host_id', $host_id)
-                               ->where('spot_id', $spot_id)
-                               ->first();
-            if (!$spot) {
-                throw new \Exception('Parking spot not found for spot_id: ' . $spot_id);
-            }
-        } else {
-            // Create a new spot if no spot_id is provided
-            $spot = ParkingSpot::create([
-                'host_id' => $host_id, // Use host_id from host_details
-            ]);
-            if (!$spot) {
-                throw new \Exception('Failed to create new parking spot');
-            }
-        }
-
-        // Create the SpotAmenities record
         $spotAmenities = new SpotAmenities();
-        $spotAmenities->spot_id = $spot->spot_id; // Use the spot_id from ParkingSpot
-        $spotAmenities->is_covered = $request->has('is_covered');
-        $spotAmenities->has_security = $request->has('has_security');
-        $spotAmenities->has_ev_charging = $request->has('has_ev_charging');
-        $spotAmenities->is_handicap_accessible = $request->has('is_handicap_accessible');
-        $spotAmenities->has_lighting = $request->has('has_lighting');
-        $spotAmenities->has_cctv = $request->has('has_cctv');
+        $spotAmenities->spot_id = $spot->spot_id;
 
-        // Save the SpotAmenities record
+        foreach ($amenities as $key => $value) {
+            $spotAmenities->$key = $value;
+        }
+
         if (!$spotAmenities->save()) {
             throw new \Exception('Failed to save spot amenities');
         }
 
-        // Optionally log the successful submission
-        Log::info('Spot amenities successfully saved for spot ID: ' . $spotAmenities->spot_id);
+        if ($spotAmenities->is_gated) {
+            return redirect()->route('pin.form', ['spot_id' => $spot->spot_id]);
+        }
 
-        // Return a success message or redirect
         return redirect()->route('title.form', ['spot_id' => $spot->spot_id]);
-    } catch (\Exception $e) {
-        // Log the error and return a failure response
-        Log::error('Error saving spot amenities: ' . $e->getMessage());
-        return back()->with('error', 'An error occurred while saving amenities: ' . $e->getMessage());
     }
-}
 }

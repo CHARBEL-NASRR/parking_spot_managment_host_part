@@ -12,11 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('availability', function (Blueprint $table) {
-            $table->id('availability_id'); 
-            $table->unsignedBigInteger('spot_id');
-            $table->time('start_time_availability'); 
-            $table->time('end_time_availability');    
-            $table->integer('day');  
+            $table->id('availability_id'); // Auto-increment primary key
+            $table->unsignedBigInteger('spot_id'); // Foreign key, nullable removed (not needed as foreign key is mandatory)
+            $table->time('start_time')->nullable(); // Time type for start time
+            $table->time('end_time')->nullable(); // Time type for end time
+            $table->tinyInteger('day')->unsigned(); // TINYINT for day, unsigned for positive integers
+
+            // Foreign key constraint linking to Parking_Spots
             $table->foreign('spot_id')->references('spot_id')->on('parking_spots')->onDelete('cascade');
         });
     }
