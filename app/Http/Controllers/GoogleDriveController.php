@@ -85,7 +85,7 @@ class GoogleDriveController extends Controller
                 // Save the new image URL to the database
                 $image = new Image();
                 $image->spot_id = $spotId;
-                $image->image_url = $uploadedFile->id;
+                $image->image_url = 'https://drive.google.com/uc?id=' .$uploadedFile->id;
                 $image->save();
             } catch (\Exception $e) {
                 Log::error('File upload failed: ' . $e->getMessage());

@@ -17,7 +17,7 @@ class pricePageController extends Controller
         }
     
         $carSize = $spot->car_type;
-        $basePrice = 5; 
+        $basePrice = 0; 
         $priceAdjustment = $this->calculatePrice($spotAmenities, $carSize);
         $finalPrice = $basePrice + $priceAdjustment;
     
