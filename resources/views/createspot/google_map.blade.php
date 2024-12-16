@@ -2,9 +2,8 @@
 <html>
 <head>
     <title>Select Parking Location</title>
-    <script src="https://maps.gomaps.pro/maps/api/js?key=AlzaSysibLFpk-iBAIv68He16T2qccVi4Ao-WSv"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMEtyOH-CVFS3qaJ-GTF0yomR1AzHGcNo&libraries=places&callback=initMap" defer></script>
     <style>
-        /* General styling */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -15,58 +14,48 @@
             min-height: 100vh;
         }
 
-        /* Header styling */
-        header {
-            color: #000000;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
 
-        header img {
-            height: 60px;
-        }
-
-        header h1 {
-            margin: 0;
+        h1 {
             font-size: 30px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
+            margin-bottom: 10px;
+            color: #333;
             text-align: center;
+            top: 20px;
+            left: 50%;
         }
 
-        /* Map container */
-        #map {
-            flex: 1;
-            height: 500px;
+        #search-bar {
             width: 90%;
             max-width: 800px;
-            margin: 20px auto;
+            margin: auto;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #map {
+            flex: 1;
+            height: 50vh;
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        /* Footer styling */
-        footer {
-            padding: 10px 20px;
+        footer form {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-        }
-
-        footer p {
-            color: #000000;
-            margin: 0;
-            font-size: 14px;
+            width: 100%;
         }
 
         footer button {
             padding: 10px 20px;
             font-size: 16px;
             color: #ffffff;
-            background-color: #000000;
+            background-color: #18b98d;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -77,48 +66,81 @@
         footer button:hover {
             background-color: #00b396;
         }
+
+        header {
+        padding: 30px 30px 0px 30px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+
+
+      header img {
+        width: 120px; /* Increased logo size */
+        height: auto; /* Maintain aspect ratio */
+        margin-left: 70px;
+      }
+
+      .logo-text {
+        color: #16a57f;
+        font-family: roboto;
+        font-size: 30px;
+        margin-bottom: 0px;
+        margin-top: 0px;
+
+      }
+
     </style>
 </head>
 <body>
     <!-- Header -->
     <header>
-        <img src="logo_parkingspot.png" alt="Logo">
-        <h1>Is the Pin in the Right Spot?</h1>
+      <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
+      <h1 class="logo-text">Chekka</h1>
     </header>
+
+    <h1>Is the Pin in the Right Spot?</h1>
+
+    <!-- Search Bar -->
+    <input id="search-bar" type="text" placeholder="Search for a location" />
 
     <!-- Map Section -->
     <div id="map"></div>
 
     <!-- Footer -->
     <footer>
-        <form method="POST" action="{{ route('save-location', ['spot_id' => $spot_id]) }}">
+        <form action="{{ route('save-location', ['spot_id' => $spot->spot_id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
+            <input type="hidden" name="spot_id" value="{{ $spot->spot_id }}">
             <input type="hidden" id="latitude" name="latitude">
             <input type="hidden" id="longitude" name="longitude">
             <input type="hidden" id="city" name="city">
+            <input type="hidden" id="address" name="address">
             <input type="hidden" id="district" name="district">
-            <input type="hidden" name="spot_id" value="{{ $spot->spot_id }}">
-            <button type="submit">Save Location</button>
+
+            <button type="button" class="btn-submit back" onclick="history.back()">Back</button>
+
+            <button class="next-button" type="submit">Next</button>
         </form>
     </footer>
 
     <script>
+        let map, marker;
+
         function initMap() {
-            // Initialize a map with a default location
             const defaultLocation = { lat: 33.8938, lng: 35.5018 }; // Default to Beirut, Lebanon
-            const map = new google.maps.Map(document.getElementById("map"), {
+
+            map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 14,
                 center: defaultLocation,
             });
 
-            // Create a draggable marker at the default location
-            let marker = new google.maps.Marker({
+            marker = new google.maps.Marker({
                 position: defaultLocation,
                 map: map,
                 draggable: true,
             });
 
-            // Attempt to get the host's current location
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
@@ -127,16 +149,11 @@
                             lng: position.coords.longitude,
                         };
 
-                        // Update the map center and marker position
                         map.setCenter(currentLocation);
                         marker.setPosition(currentLocation);
-
-                        // Update hidden inputs with current location
-                        document.getElementById('latitude').value = currentLocation.lat;
-                        document.getElementById('longitude').value = currentLocation.lng;
+                        updateHiddenFields(currentLocation.lat, currentLocation.lng);
                     },
-                    (error) => {
-                        console.error("Error obtaining location:", error);
+                    () => {
                         alert("Could not get your location. Please place the marker manually.");
                     }
                 );
@@ -144,58 +161,101 @@
                 alert("Geolocation is not supported by this browser. Please place the marker manually.");
             }
 
-            // Update the hidden input fields when the marker is dragged
             google.maps.event.addListener(marker, 'dragend', (event) => {
-                document.getElementById('latitude').value = event.latLng.lat();
-                document.getElementById('longitude').value = event.latLng.lng();
-                reverseGeocode(event.latLng.lat(), event.latLng.lng());
+                const lat = event.latLng.lat();
+                const lng = event.latLng.lng();
+                updateHiddenFields(lat, lng);
+                reverseGeocode(lat, lng);
             });
+
+            initAutocomplete();
+        }
+
+        function updateHiddenFields(lat, lng) {
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
         }
 
         function reverseGeocode(lat, lng) {
-            const apiKey = "AlzaSysibLFpk-iBAIv68He16T2qccVi4Ao-WSv";
-            const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "OK") {
-                        const results = data.results;
-                        if (results.length > 0) {
-                            const addressComponents = results[0].address_components;
+    const apiKey = "AIzaSyAUWpOFgtmsToV5nEndIDegEbzNf78O_tg";
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
 
-                            let city = "";
-                            let district = "";
+    fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.status === "OK") {
+                const results = data.results[0].address_components;
+                let address = data.results[0].formatted_address;
+                let city = "";
+                let district = "";
 
-                            addressComponents.forEach(component => {
-                                if (component.types.includes("locality")) {
-                                    city = component.long_name;
-                                }
-                                if (component.types.includes("sublocality") || component.types.includes("administrative_area_level_2")) {
-                                    district = component.long_name;
-                                }
-                            });
+                // Check if the address is a Plus Code and decode it into a readable address
+                if (address.includes("PLUS_CODE")) {
+                    const plusCode = address.split(" ")[0];
+                    const plusCodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${plusCode}&key=${apiKey}`;
 
-                            console.log(`City: ${city}`);
-                            console.log(`District: ${district}`);
-
-                            // Set the city and district in the hidden inputs
-                            document.getElementById("city").value = city;
-                            document.getElementById("district").value = district;
-
-                            // Display results
-                            document.getElementById("output").textContent = `City: ${city}, District: ${district}`;
+                    fetch(plusCodeUrl)
+                        .then((response) => response.json())
+                        .then((plusCodeData) => {
+                            if (plusCodeData.status === "OK") {
+                                const readableAddress = plusCodeData.results[0].formatted_address;
+                                document.getElementById("address").value = readableAddress;
+                            }
+                        })
+                        .catch(() => {
+                            alert("Error decoding the Plus Code.");
+                        });
+                } else {
+                    // Normal geocoding results processing
+                    results.forEach((component) => {
+                        if (component.types.includes("locality")) {
+                            city = component.long_name;
                         }
-                    } else {
-                        console.error("Reverse geocoding failed:", data.status);
-                        alert("Could not retrieve location details.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching reverse geocoding data:", error);
-                });
+                        if (component.types.includes("sublocality") || component.types.includes("administrative_area_level_2")) {
+                            district = component.long_name;
+                        }
+                    });
+
+                    document.getElementById("city").value = city;
+                    document.getElementById("district").value = district;
+                    document.getElementById("address").value = address;
+                }
+            } else {
+                console.error("Reverse geocoding failed:", data.status);
+                alert("Could not retrieve location details.");
+            }
+        })
+        .catch(() => {
+            alert("Error fetching reverse geocoding data.");
+        });
+}
+
+
+        function initAutocomplete() {
+            const input = document.getElementById("search-bar");
+            const autocomplete = new google.maps.places.Autocomplete(input);
+
+            autocomplete.addListener("place_changed", () => {
+                const place = autocomplete.getPlace();
+                console.log(place);
+                
+                if (!place.geometry || !place.geometry.location) {
+                    alert("No details available for the input location.");
+                    return;
+                }
+
+                const location = place.geometry.location;
+                map.setCenter(location);
+                map.setZoom(14);
+                marker.setPosition(location);
+
+                updateHiddenFields(location.lat(), location.lng());
+                reverseGeocode(location.lat(), location.lng());
+            });
         }
 
-        window.onload = initMap;
+        // Initialize the map once the script is loaded
+        window.initMap = initMap;
     </script>
 </body>
 </html>

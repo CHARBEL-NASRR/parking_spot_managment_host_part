@@ -9,7 +9,9 @@ use App\Http\Controllers\createtitleController;
 use App\Http\Controllers\DescriptionController;
 use App\Http\Controllers\GoogleDriveController;
 use App\Http\Controllers\upload_id_Controller;
+use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\AmennitiesController;
+use App\Http\Controllers\PinController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\SpotsController;
@@ -18,6 +20,9 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\pricePageController;
+use App\Http\Controllers\carSizeController;
+use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\UpcomingBookingsController;    
 
@@ -58,39 +63,58 @@ Route::prefix('host')->group(function () {
 
 
        Route::group(['middleware' => 'auth'], function () {
+
+        Route::get('/getstarted', function () {
+            return view('createspot.GetStarted');
+        })->name('getstarted');
+
+        Route::get('/upload_docs', [VerificationController::class, 'showuploadverificationpage'])->name('upload_docs.form');
+        Route::post('/upload_docs', [VerificationController::class, 'uploadVeriDocsToGoogleDrive2'])->name('upload_docs.save');
+        Route::get('/upload-docs', [VerificationController::class, 'showUploadForm'])->name('upload_docs.updateform');
+        Route::post('/upload-docs', [VerificationController::class, 'updateVeriDocsInGoogleDrive'])->name('upload-docs.update');
         
-        Route::get('/location',[LocationController::class,'showLocationForm'])->name('location.form');
-        Route::post('/googlemap',[LocationController::class,'saveLocation'])->name('save-location');
+        
         Route::get('/amenities', [AmennitiesController::class, 'showAmenitiesForm'])->name('amenities.show');
         Route::post('/amenities/save', [AmennitiesController::class, 'submitAmenities'])->name('amenities.save');
+        Route::get('/pin', [PinController::class, 'showPinForm'])->name('pin.form');
+        Route::post('/pin', [PinController::class, 'storePin'])->name('pin.submit');
         Route::get('/title', [createtitleController::class, 'showTitleForm'])->name('title.form');
         Route::post('/title', [createtitleController::class, 'saveTitle'])->name('title.save');
-        Route::get('/upload_id', [upload_id_Controller::class, 'showuploadpage'])->name('upload_id.form');
-        Route::post('/upload_id/upload', [upload_id_Controller::class, 'uploadImageToGoogleDrive2'])->name('upload_id.save');
         Route::get('/description/{spot_id}', [DescriptionController::class, 'showDescriptionForm'])->name('description.form');
         Route::post('/description/{spot_id}', [DescriptionController::class, 'saveDescription'])->name('description.save');
         Route::get('/images/{spot_id}', [GoogleDriveController::class, 'showImagesForm'])->name('images.form');
+        //
         Route::post('/images/upload', [GoogleDriveController::class, 'uploadImageToGoogleDrive'])->name('google.upload');
+        Route::get('/location/{spot_id}',[LocationController::class,'showLocationForm'])->name('location.form');
+        Route::post('/googlemap/{spot_id}',[LocationController::class,'saveLocation'])->name('save-location');
+        Route::get('/price/{spot_id}', [pricePageController::class, 'showpriceForm'])->name('price.form');
+        Route::post('/price/{spot_id}',[pricePageController::class, 'savePrice'])->name('save-price');
+        Route::get('/carSize/{spot_id}', [carSizeController::class, 'showCarSizeForm'])->name('carSize.show');
+        Route::post('/carSize/{spot_id}', [carSizeController::class, 'saveCarSize'])->name("carSize.save");
+        Route::get('/availability/{spot_id}', [AvailabilityController::class, 'showAvailabilityForm'])->name('availability.form');
+        Route::post('/availability', [AvailabilityController::class, 'saveAvailability'])->name('availability.save');
 
-
+        Route::get('/upload_id', [upload_id_Controller::class, 'showuploadpage'])->name('upload_id.form');
+        Route::post('/upload_id/upload', [upload_id_Controller::class, 'uploadImageToGoogleDrive2'])->name('upload_id.save');
 
 
         Route::get('/dashboard', function () {
             return view('dashboard.dashboard');
         })->name('dashboard');
+
         Route::get('/dashboard/revenue-data', [DashboardController::class, 'getRevenueData'])->name('dashboard.revenue-data');
-        Route::get('/dashboard/monthly-profit', [DashboardController::class, 'getmonthlyprofit'])->name('dashboard.monthly-profit');
-        Route::get('/dashboard/daily-profit', [DashboardController::class, 'getdailyprofit'])->name('dashboard.daily-profit');
-        Route::get('/dashboard/deals-completed', [DashboardController::class, 'getdealcompleted'])->name('dashboard.deals-completed');
-        Route::get('/dashboard/overall-rating', [DashboardController::class, 'getoverallrating'])->name('dashboard.overall-rating');        
+        Route::get('/dashboard/last-bookings', [DashboardController::class, 'getLastBookings'])->name('dashboard.last-bookings');
+        Route::get('/dashboard/monthly-income', [DashboardController::class, 'getMonthlyIncome'])->name('dashboard.monthly-income');
+        Route::get('/dashboard/daily-income', [DashboardController::class, 'getDailyIncome'])->name('dashboard.daily-income');
+        Route::get('/dashboard/deals-completed', [DashboardController::class, 'getDealsCompleted'])->name('dashboard.deals-completed');
+        Route::get('/dashboard/overall-rating', [DashboardController::class, 'getOverallRating'])->name('dashboard.overall-rating');
         
-        
-        
-        Route::get('/calendar/{spot_id?}', [CalendarController::class, 'showCalendar'])->name('calendar');
-        Route::get('/calendar/events/{spot_id}', [CalendarController::class, 'getSpotEvents'])->name('calendar.events');
-        Route::post('/calendar/save', [CalendarController::class, 'saveAvailability'])->name('calendar.save');
-        Route::post('/calendar/delete', [CalendarController::class, 'deleteAvailability'])->name('calendar.delete');
-        Route::post('/calendar/update', [CalendarController::class, 'updateAvailability'])->name('calendar.update');
+          
+        Route::get('/weekly-schedule', [CalendarController::class, 'showWeeklySchedule'])->name('weekly-schedule');
+        Route::get('/get-spot-availability/{spotId}', [CalendarController::class, 'getSpotAvailability'])->name('get-spot-availability');
+        Route::post('/save-availability', [CalendarController::class, 'saveAvailability']);
+        Route::post('/update-availability', [CalendarController::class, 'updateAvailability']);
+        Route::post('/delete-availability', [CalendarController::class, 'deleteAvailability']);
        
        
         Route::get('/spots', [SpotsController::class, 'showSpots'])->name('spots.show');

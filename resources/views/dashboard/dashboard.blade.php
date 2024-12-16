@@ -22,7 +22,7 @@
         <!-- small box -->
         <div class="small-box bg-info">
           <div class="inner">
-            <h3>150</h3>
+            <h3 id="income-per-month">-</h3>
             <p>Income per month</p>
           </div>
           <div class="icon">
@@ -35,7 +35,7 @@
         <!-- small box -->
         <div class="small-box bg-success">
           <div class="inner">
-            <h3>53</h3>
+            <h3 id="income-per-day">-</h3>
             <p>Income per day</p>
           </div>
           <div class="icon">
@@ -48,7 +48,7 @@
         <!-- small box -->
         <div class="small-box bg-warning">
           <div class="inner">
-            <h3>44</h3>
+            <h3 id="deals-completed">-</h3>
             <p>Deals completed</p>
           </div>
           <div class="icon">
@@ -61,7 +61,7 @@
         <!-- small box -->
         <div class="small-box bg-danger">
           <div class="inner">
-            <h3>4</h3>
+            <h3 id="overall-rating">-</h3>
             <p>Overall rating /5</p>
           </div>
           <div class="icon">
@@ -88,7 +88,6 @@
                 <li class="nav-item">
                   <a class="nav-link active" href="#revenue-chart" data-toggle="tab">Area</a>
                 </li>
-             
               </ul>
             </div>
           </div><!-- /.card-header -->
@@ -99,9 +98,6 @@
                    style="position: relative; height: 300px;">
                   <canvas id="revenue-chart-canvas" height="300" style="height: 300px;"></canvas>
                </div>
-              <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;">
-                <canvas id="sales-chart-canvas" height="300" style="height: 300px;"></canvas>
-              </div>
             </div>
           </div><!-- /.card-body -->
         </div>
@@ -129,7 +125,11 @@
             <!-- /.card-tools -->
           </div>
           <div class="card-body">
-            <div id="world-map" style="height: 250px; width: 100%;"></div>
+            <!-- Bookings will be dynamically inserted here -->
+            <div id="last-bookings-container" class="list-group">
+              <!-- Placeholder for bookings -->
+              <p>Loading bookings...</p>
+            </div>
           </div>
           <!-- /.card-body-->
           <div class="card-footer bg-transparent">
@@ -170,6 +170,8 @@
 <script src="{{ asset('plugins/jquery-ui/jquery-ui.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
 <script>
@@ -183,59 +185,115 @@
 <script src="{{ asset('dist/js/demo.js') }}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
+
 <script>
 $(document).ready(function() {
-    // Fetch revenue data from the backend route
+
+    // Function to format date
+    function formatDate(dateString) {
+        return moment(dateString).format('MMMM D, YYYY h:mm A');
+    }
+
+    // Fetch last bookings
     $.ajax({
-        url: '{{ route('dashboard.revenue-data') }}',  // This should match the route you created
+        url: '{{ route('dashboard.last-bookings') }}',
+        method: 'GET',
+        success: function(response) {
+            // Clear any existing content
+            $('#last-bookings-container').empty();
+
+            // Check if bookings exist
+            if (!response.bookings || response.bookings.length === 0) {
+                $('#last-bookings-container').html('<p>No recent bookings</p>');
+                return;
+            }
+
+            // Create bookings list
+            response.bookings.forEach(function(booking) {
+                var bookingItem = `
+                    <div class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">${booking.guest_name} - ${booking.spot_title}</h5>
+                            <small>${formatDate(booking.created_at)}</small>
+                        </div>
+                        <p class="mb-1">
+                            Status: ${booking.status} | 
+                            Price: $${parseFloat(booking.total_price).toFixed(2)}
+                        </p>
+                    </div>
+                `;
+                $('#last-bookings-container').append(bookingItem);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching last bookings:', error);
+            $('#last-bookings-container').html('<p>Error loading bookings</p>');
+        }
+    });
+
+    // Revenue Chart
+    $.ajax({
+        url: '{{ route('dashboard.revenue-data') }}',
         method: 'GET',
         success: function(data) {
-            // Assuming the backend returns data in this structure:
-            // [{ "date": "2024-12-12", "total": 150 }, ...]
-            
-            // Extract labels (dates) and revenue data (totals)
-            var labels = data.map(function(item) {
-                return item.date;
-            });
-            var revenues = data.map(function(item) {
-                return item.total;
+            // If no data, handle empty state
+            if (data.length === 0) {
+                $('#revenue-chart-canvas').html('<p>No revenue data available</p>');
+                return;
+            }
+
+            // Process data to create cumulative revenue
+            let cumulativeRevenue = [];
+            let runningTotal = 0;
+            let labels = [];
+
+            // Sort data by date to ensure correct cumulative calculation
+            data.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            // Calculate cumulative revenue
+            data.forEach(item => {
+                runningTotal += parseFloat(item.total);
+                labels.push(moment(item.date).format('YYYY-MM-DD'));
+                cumulativeRevenue.push(runningTotal);
             });
 
-            // Create the area chart dynamically with the fetched data
+            // Create the chart
             var ctx = document.getElementById('revenue-chart-canvas').getContext('2d');
             var revenueChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Revenue',
-                        data: revenues,
+                        label: 'Cumulative Revenue',
+                        data: cumulativeRevenue,
                         backgroundColor: 'rgba(60,141,188,0.2)',
                         borderColor: 'rgba(60,141,188,1)',
-                        borderWidth: 1
+                        borderWidth: 2,
+                        fill: true,
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(60,141,188,1)',
+                        pointHoverRadius: 8
                     }]
                 },
                 options: {
+                    responsive: true,
                     scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                unit: 'day',
-                                tooltipFormat: 'll',
-                                displayFormats: {
-                                    day: 'MMM D'
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Date'
-                            }
-                        },
                         y: {
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Revenue'
+                                text: 'Cumulative Revenue ($)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toFixed(2);
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
                             }
                         }
                     },
@@ -243,7 +301,7 @@ $(document).ready(function() {
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return 'Revenue: $' + context.parsed.y;
+                                    return 'Total Revenue: $' + context.parsed.y.toFixed(2);
                                 }
                             }
                         }
@@ -253,9 +311,71 @@ $(document).ready(function() {
         },
         error: function(xhr, status, error) {
             console.error('Error fetching revenue data:', error);
+            $('#revenue-chart-canvas').html('<p>Error loading revenue data</p>');
         }
     });
+
+    function fetchMonthlyIncome() {
+        $.ajax({
+            url: '{{ route('dashboard.monthly-income') }}',
+            method: 'GET',
+            success: function(response) {
+                $('#income-per-month').text('$' + response.toFixed(2));
+            },
+            error: function() {
+                $('#income-per-month').text('Error');
+            }
+        });
+    }
+
+    // Function to fetch daily income
+    function fetchDailyIncome() {
+        $.ajax({
+            url: '{{ route('dashboard.daily-income') }}',
+            method: 'GET',
+            success: function(response) {
+                $('#income-per-day').text('$' + response.toFixed(2));
+            },
+            error: function() {
+                $('#income-per-day').text('Error');
+            }
+        });
+    }
+
+    // Function to fetch deals completed
+    function fetchDealsCompleted() {
+        $.ajax({
+            url: '{{ route('dashboard.deals-completed') }}',
+            method: 'GET',
+            success: function(response) {
+                $('#deals-completed').text(response);
+            },
+            error: function() {
+                $('#deals-completed').text('Error');
+            }
+        });
+    }
+
+
+    // Function to fetch overall rating
+    function fetchOverallRating() {
+        $.ajax({
+            url: '{{ route('dashboard.overall-rating') }}',
+            method: 'GET',
+            success: function(response) {
+                $('#overall-rating').text(response.toFixed(1));
+            },
+            error: function() {
+                $('#overall-rating').text('Error');
+            }
+        });
+    }
+
+    // Load all stats
+    fetchMonthlyIncome();
+    fetchDailyIncome();
+    fetchDealsCompleted();
+    fetchOverallRating();
 });
 </script>
-
 @endsection

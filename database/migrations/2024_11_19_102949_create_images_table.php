@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('Images', function (Blueprint $table) {
-            $table->id('image_id');  // Custom primary key
-            $table->unsignedBigInteger('spot_id');
-            $table->string('image_url');
-
-            $table->foreign('spot_id')->references('spot_id')->on('Parking_Spots')->onDelete('cascade');
+        Schema::create('images', function (Blueprint $table) {
+            $table->id('image_id'); // Auto-increment primary key
+            $table->unsignedBigInteger('spot_id'); // Foreign key, no longer nullable
+            $table->string('image_url', 255)->nullable(); // image_url with a length of 255
+        
+            // Foreign key constraint linking to Parking_Spots
+            $table->foreign('spot_id')->references('spot_id')->on('parking_spots')->onDelete('cascade');
         });
     }
 

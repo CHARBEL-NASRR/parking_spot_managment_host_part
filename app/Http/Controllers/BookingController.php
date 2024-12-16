@@ -10,6 +10,7 @@ use App\Models\ParkingSpot;
 use App\Models\HostDetail;
 use Illuminate\Support\Facades\Log;
 use App\Models\Transaction;
+use App\Models\SetParam;
 
 class BookingController extends Controller
 {
@@ -53,7 +54,6 @@ class BookingController extends Controller
 
 
 
-
 public function updateBookingStatus(Request $request, $id)
 {
     $request->validate([
@@ -61,9 +61,7 @@ public function updateBookingStatus(Request $request, $id)
     ]);
 
     $booking = Booking::findOrFail($id);
-
     $guest = User::find($booking->guest_id);
-
     $totalPrice = $booking->total_price;
 
     $guestWallet = Wallet::where('user_id', $guest->user_id)->first();
@@ -72,14 +70,12 @@ public function updateBookingStatus(Request $request, $id)
     }
 
     $userId = auth()->id();
-
     $hostDetail = HostDetail::where('user_id', $userId)->first();
     if (!$hostDetail) {
         return redirect()->back()->with('error', 'Host details not found.');
     }
 
     $hostId = $hostDetail->host_id;
-
     $hostWallet = Wallet::firstOrCreate(
         ['user_id' => $userId], 
         ['balance' => 0, 'last_updated' => now()]
@@ -91,25 +87,27 @@ public function updateBookingStatus(Request $request, $id)
             $booking->save();
             return redirect()->back()->with('error', 'Insufficient funds. Booking rejected.');
         } else {
+            $commissionRate = SetParam::first()->commission_rate;
+            $commissionAmount = ($totalPrice * $commissionRate) / 100;
+            $amountAfterCommission = $totalPrice - $commissionAmount;
+            Log::info('Commission details', ['commissionRate' => $commissionRate, 'commissionAmount' => $commissionAmount, 'amountAfterCommission' => $amountAfterCommission]);
+
             $guestWallet->balance -= $totalPrice;
-            $hostWallet->balance += $totalPrice;
+            $hostWallet->balance += $amountAfterCommission;
             $guestWallet->save();
             $hostWallet->save();
 
-            $booking->status = 'upcomming';
+            $booking->status = 'accepted';
             $booking->save();
 
-
-   
-            // Create a transaction record
             Transaction::create([
                 'sender_wallet_id' => $guestWallet->wallet_id,
                 'receiver_wallet_id' => $hostWallet->wallet_id,
                 'booking_id' => $booking->booking_id,
-                'transaction_type' => 'upcoming',
+                'transaction_type' => 'transferred',
                 'deducted_amount' => $totalPrice,
-                'received_amount' => $totalPrice,
-                'commission_amount' => 0,
+                'received_amount' => $amountAfterCommission,
+                'commission_amount' => $commissionAmount,
                 'created_at' => now(),
                 'ticket_id' => null,
             ]);
@@ -124,6 +122,5 @@ public function updateBookingStatus(Request $request, $id)
 
     return redirect()->back()->with('error', 'Invalid status.');
 }
-
 
 }

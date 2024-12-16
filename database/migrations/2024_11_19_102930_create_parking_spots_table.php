@@ -12,19 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('parking_spots', function (Blueprint $table) {
-            $table->id('spot_id');  // Custom primary key
-            $table->unsignedBigInteger('host_id')->nullable();  // Foreign key to Users table
-            $table->decimal('longitude', 10, 6)->nullable();
-            $table->decimal('latitude', 10, 6)->nullable();
-            $table->decimal('price_per_hour', 8, 2)->nullable();
-            $table->string('car_type')->nullable();
-            $table->string('title')->nullable();
-            $table->text('main_description')->nullable();
-            $table->float('overall_rating')->nullable();
-            $table->string('status')->nullable();
-
-            $table->foreign('host_id')->references('user_id')->on('users')->onDelete('cascade');
-            $table->timestamps(); // Add timestamps if needed
+            $table->id('spot_id'); // Primary key
+            $table->unsignedBigInteger('host_id'); // Foreign key
+            $table->decimal('longitude', 13, 10)->nullable(); 
+            $table->decimal('latitude', 13, 10)->nullable();  
+            $table->decimal('price_per_hour', 8, 2)->nullable(); 
+            $table->enum('car_type', ['2wheeler', '4wheeler', '6wheeler', '8wheeler'])->default('4wheeler');
+            $table->string('title', 50)->nullable();
+            $table->string('main_description', 50)->nullable();
+            $table->decimal('overall_rating', 2, 1)->nullable();
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->string('verification_documents')->nullable();
+            $table->char('key_box', 4)->nullable();
+        
+            $table->foreign('host_id')->references('host_id')->on('host_details')->onDelete('cascade');
         });
     }
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\UserRole;
+use App\Models\HostDetail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use AuthenticatesUsers;
@@ -47,8 +49,18 @@ class LoginController extends Controller
         }
          $token = $user->createToken('Personal Access Token')->accessToken;
             Auth::login($user);
-            session(['user_id' => $user->id]);
-            return redirect()->route('dashboard'); // Redirect to a desired route after login
-    }
+            $userRole = UserRole::where('user_id',  $user->user_id)->first();
     
-}
+            if ($userRole && $userRole->role_id == 2) {
+                $hostDetail = HostDetail::where('user_id', $user->user_id)->first();
+                if ($hostDetail) {
+                    session(['host_id' => $hostDetail->host_id]);
+                    return redirect()->route('dashboard');  
+                } else {
+                    return redirect()->route('upload_id.form');
+                }   
+            } else {
+                return redirect()->back()->withErrors(['error' => 'You are not authorized to access this page.']);
+            }   
+        }
+    }

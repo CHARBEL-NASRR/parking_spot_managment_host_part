@@ -106,8 +106,8 @@
               </p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="{{ route('calendar') }}" class="nav-link">
+               <li class="nav-item">
+            <a href="{{ route('weekly-schedule') }}" class="nav-link">
               <i class="nav-icon far fa-calendar-alt"></i>
               <p>
                 Calendar

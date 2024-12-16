@@ -14,20 +14,22 @@ class CreateTicketsTable extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id('ticket_id');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->unsignedBigInteger('admin_id')->nullable();
-            $table->string('type')->nullable();
-            $table->string('title')->nullable();
-            $table->string('status', 50)->nullable();
-            $table->string('description', 50)->nullable();
-            $table->string('response', 50)->nullable();
-            $table->timestamps();
+            $table->unsignedBigInteger('user_id');  // Not nullable, foreign key
+            $table->unsignedBigInteger('admin_id');  // Not nullable, foreign key
+            $table->string('type');
+            $table->string('title');
+            $table->enum('status', ['pending', 'done','seen'])->default('pending');
+            $table->string('description', 150);
+            $table->string('response', 150);
+            $table->timestamps(0);  // Automatically creates `created_at` and `updated_at`
 
-            $table->index('user_id');
+            // Foreign key constraints
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
+            //$table->foreign('admin_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->index('admin_id');
+
         });
     }
-
     /**
      * Reverse the migrations.
      *

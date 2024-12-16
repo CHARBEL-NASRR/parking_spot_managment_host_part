@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wallets', function (Blueprint $table) {
-            $table->id('wallet_id');  // Custom primary key
-            $table->unsignedBigInteger('user_id');
-            $table->decimal('balance', 10, 2);
-            $table->timestamp('last_updated')->useCurrent(); // Default to current timestamp
-
-            // Foreign key constraint linking to the Users table
+        Schema::create('host_details', function (Blueprint $table) {
+            $table->id('host_id'); // Custom primary key
+            $table->unsignedBigInteger('user_id'); // Remove nullable to match SQL
+            $table->string('id_card', 255)->nullable(); // Default NULL
+            
+            // Foreign key
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('wallets');
+        Schema::dropIfExists('host_details');
     }
 };

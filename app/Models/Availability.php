@@ -14,8 +14,8 @@ class Availability extends Model
 
     protected $fillable = [
         'spot_id',
-        'start_time_availability',
-        'end_time_availability',
+        'start_time',
+        'end_time',
         'day',
     ];
 

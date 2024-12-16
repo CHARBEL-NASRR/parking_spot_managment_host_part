@@ -24,16 +24,6 @@
         gap: 100px;
         height: 97vh;
       }
-      textarea {
-        font-size: 18px;
-        text-align: left;
-        width: 100%;
-        max-width: 500px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        resize: both;
-      }
       form {
         display: flex;
         flex-direction: column;
@@ -164,23 +154,30 @@
       <img src="{{ asset('images/logo_parkingspot.png') }}" alt="Logo">
       <h1 class="logo-text">Chekka</h1>
     </header>
-    <form method="POST" action="{{ route('description.save', $spot->spot_id) }}">
+    <form id="pinForm" action="{{ route('pin.submit') }}" method="POST">
     @csrf
       <input type="hidden" name="spot_id" value="{{ $spot->spot_id }}"> <!-- Hidden spot_id -->
       <div class="container">
-      <h1>Now, let's give your spot a description</h1>
-        <p>
-          Provide a detailed description. Remember, you can always change it later
-          in settings.
-        </p>
+        <h1>Please enter your 4-digit PIN</h1>
+        <p>Your PIN is secure. Please enter it to continue.</p>
         <div class="pin-input">
-          <textarea name="description" id="description" placeholder="Enter your description"></textarea>
+          <input type="password" name="pin" class="pin-input" placeholder="* * * *" maxlength="4" required pattern="\d{4}" />
         </div>
       </div>
+      
       <div class="bottom">
-        <button type="button" class="btn-submit back" onclick="history.back()">Back</button>     
-        <button type="submit" class="btn-submit next">Next</button>
+      <button 
+          type="button" 
+          class="btn-submit" 
+          onclick="window.location.href='{{ route('amenities.show', ['spot_id' => $spot->spot_id]) }}'">
+          Back
+      </button>
+
+
+      
+        <button type="submit" class="btn-submit next" form="pinForm">Next</button>
       </div>
+
     </form>
   </body>
 </html>

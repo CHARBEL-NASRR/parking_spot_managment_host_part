@@ -42,6 +42,15 @@ class GoogleDriveController extends Controller
         $files = $request->file('images');
         $spotId = $request->input('spot_id');
 
+        // Delete existing images associated with the given spot_id
+        try {
+            Image::where('spot_id', $spotId)->delete();
+            Log::info('Old images deleted for spot_id: ' . $spotId);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete old images: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to delete old images'], 500);
+        }
+
         foreach ($files as $file) {
             // Check if the file is valid
             if (!$file->isValid()) {
@@ -73,10 +82,10 @@ class GoogleDriveController extends Controller
                 $permission->setType('anyone');
                 $driveService->permissions->create($uploadedFile->id, $permission);
 
-                // Save the image URL to the database
+                // Save the new image URL to the database
                 $image = new Image();
                 $image->spot_id = $spotId;
-                $image->image_url = $uploadedFile->id;
+                $image->image_url = 'https://drive.google.com/uc?id=' .$uploadedFile->id;
                 $image->save();
             } catch (\Exception $e) {
                 Log::error('File upload failed: ' . $e->getMessage());
@@ -84,6 +93,6 @@ class GoogleDriveController extends Controller
             }
         }
 
-return redirect()->route('location.form', ['spot_id' => $spotId]);    
-}
+        return redirect()->route('location.form', ['spot_id' => $spotId]);
+    }
 }

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-
+use App\Models\HostDetail;
 class GoogleLoginController extends Controller
 {
     public function redirectToGoogle()
@@ -44,6 +44,15 @@ class GoogleLoginController extends Controller
                 Auth::login($user);
                 $token = $user->createToken('Personal Access Token')->accessToken;
             }
+
+    $hostDetail = HostDetail::where('user_id', $user->user_id)->first();
+                if ($hostDetail) {
+                    session(['host_id' => $hostDetail->host_id]);
+                    return redirect()->route('dashboard');  
+                } else {
+                    return redirect()->route('upload_id.form');
+                }  
+            
             session(['google_drive_access_token' => $googleUser->token]);
             session(['google_drive_refresh_token' => $googleUser->refreshToken]);
             return redirect()->route('dashboard');

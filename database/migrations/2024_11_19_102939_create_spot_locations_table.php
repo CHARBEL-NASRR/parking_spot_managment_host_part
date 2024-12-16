@@ -11,14 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('Spot_Locations', function (Blueprint $table) {
+        Schema::create('spot_locations', function (Blueprint $table) {
             $table->id('location_id');  // Custom primary key
-            $table->unsignedBigInteger('spot_id');
-            $table->string('address');
-            $table->string('city');
-            $table->string('district');
-
-            $table->foreign('spot_id')->references('spot_id')->on('Parking_Spots')->onDelete('cascade');
+            $table->unsignedBigInteger('spot_id')->nullable();
+            $table->string('address')->nullable();
+            $table->string('city')->nullable();
+            $table->string('district')->nullable();
+        
+            // Foreign key constraint linking to Parking_Spots
+            $table->foreign('spot_id')->references('spot_id')->on('parking_spots')->onDelete('cascade');
         });
     }
 
