@@ -5,20 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SetParam extends Model
+class CreateSetParamsTable extends Migration
 {
-    use HasFactory;
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('set_param', function (Blueprint $table) {
+            $table->id('condition_id');
+            $table->decimal('threshold_amount', 10, 2);
+            $table->string('schedule', 50);
+            $table->string('commission_rate', 50);
+            $table->timestamp('created_at')->useCurrent();
+        });
+    }
 
-    protected $table = 'set_param';
-
-    protected $primaryKey = 'condition_id';
-
-    protected $fillable = [
-        'threshold_amount',
-        'schedule',
-        'commission_rate',
-        'created_at',
-    ];
-
-    public $timestamps = false;
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('set_param');
+    }
 }

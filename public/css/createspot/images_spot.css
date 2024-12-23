@@ -4,7 +4,8 @@ body {
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
     height: 100vh;
     background-color: #f9f9f9;
@@ -49,10 +50,33 @@ body {
     gap: 20px;
     justify-content: center;
 }
+header {
+    padding: 30px 30px 0px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+
+  header img {
+    width: 120px; /* Increased logo size */
+    height: auto; /* Maintain aspect ratio */
+    margin-left: 100px;
+  }
+
+  .logo-text {
+    color: #16a57f;
+    font-family: roboto;
+    font-size: 30px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+
+  }
 
 .upload-box {
-    width: 200px;
-    height: 200px;
+    width: 120px;
+    height: 120px;
     border: 2px dashed #ccc;
     border-radius: 8px;
     display: flex;
@@ -146,40 +170,26 @@ body {
     color: #ccc;
 }
 
-footer {
+.bottom {
     display: flex;
+    width: 100%;
     justify-content: space-between;
-    align-items: center;
-    width: 97%;
-    position: absolute;
-    bottom: 2%;
-    left: 0;
-    padding: 10px;
-}
+    padding: 10px 30px 30px 30px;
+  }
 
-footer .btn {
-    background: none;
+.bottom .btn {
     border: 1px solid #ccc;
-    padding: 8px 15px;
+    padding: 13px 27px;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 18px;
+    color: white;
+    background-color: #18b98d;
+
 }
 
-footer .btn.back {
-    color: #555;
-}
 
-footer .btn.next {
-    background-color: #ddd;
-    color: #aaa;
-}
 
-footer .btn.next.active {
-    background-color: #000;
-    color: #fff;
-    cursor: pointer;
-}
-
-footer .btn:hover:not(.next:disabled) {
+.bottom .btn:hover:not(.next:disabled) {
     background-color: #0bc2a2;
 }

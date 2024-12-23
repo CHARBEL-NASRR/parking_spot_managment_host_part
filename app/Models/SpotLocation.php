@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SpotLocation extends Model
 {
-    protected $table = 'Spot_Locations';
+    protected $table = 'spot_locations';
     protected $primaryKey = 'location_id';  // Custom primary key
     public $incrementing = true;
     protected $keyType = 'int';
+    public $timestamps = false;
+
 
     protected $fillable = [
         'location_id',   

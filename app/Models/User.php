@@ -13,7 +13,7 @@ class User extends Authenticatable implements AuthenticatableContract
 {
     use  HasApiTokens,HasFactory,Notifiable;
 
-    protected $table = 'Users';  
+    protected $table = 'users';  
     protected $primaryKey = 'user_id';  // Custom primary key
     public $incrementing = true;        
     protected $keyType = 'int';  
